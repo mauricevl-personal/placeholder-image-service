@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placeholder Image Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .service-url {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            margin-bottom: 2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .color-input input[type="text"] {
+            flex: 1;
+        }
+
+        .size-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .size-preset {
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .size-preset:hover {
+            border-color: #3b82f6;
+            background: #f1f5f9;
+        }
+
+        .size-preset.active {
+            border-color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .size-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .button:hover {
+            background: #2563eb;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-container {
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .generated-url {
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            color: #1e293b;
+        }
+
+        .examples {
+            margin-top: 3rem;
+        }
+
+        .examples h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #1e293b;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .example-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .example-item h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .example-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .example-code {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+        }
+
+        .docs {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .docs h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+
+        .docs table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .docs th,
+        .docs td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .docs th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .docs code {
+            background: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Placeholder Image Service</h1>
+            <p>Generate custom placeholder images via URL parameters</p>
+            <div class="service-url" id="serviceUrlDisplay">
+                <strong>Service URL:</strong> [Your URL will appear here after deployment]
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Image Generator</h2>
+                <form id="imageForm">
+                    <div class="form-group">
+                        <label for="emoji">Emoji</label>
+                        <input type="text" id="emoji" value="🎨" maxlength="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="header">Header Text</label>
+                        <input type="text" id="header" value="Your Header Here" maxlength="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="body">Body Text</label>
+                        <textarea id="body" maxlength="200">Add your description or body text here.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bgColor">Background Color</label>
+                        <div class="color-input">
+                            <input type="color" id="bgColorPicker" value="#f3f4f6">
+                            <input type="text" id="bgColor" value="f3f4f6" maxlength="7">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="textColor">Text Color</label>
+                        <div class="color-input">
+                            <input type="color" id="textColorPicker" value="#374151">
+                            <input type="text" id="textColor" value="374151" maxlength="7">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Size Presets</label>
+                        <div class="size-presets">
+                            <div class="size-preset active" data-width="400" data-height="300">Square<br>400×300</div>
+                            <div class="size-preset" data-width="600" data-height="400">Landscape<br>600×400</div>
+                            <div class="size-preset" data-width="400" data-height="600">Portrait<br>400×600</div>
+                            <div class="size-preset" data-width="800" data-height="200">Banner<br>800×200</div>
+                        </div>
+                        <div class="size-inputs">
+                            <div>
+                                <label for="width">Width</label>
+                                <input type="number" id="width" value="400" min="100" max="1200">
+                            </div>
+                            <div>
+                                <label for="height">Height</label>
+                                <input type="number" id="height" value="300" min="100" max="1200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="button" onclick="generateImage()">🔄 Generate</button>
+                        <button type="button" class="button" onclick="copyUrl()">📋 Copy URL</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Preview</h2>
+                <div class="preview-container">
+                    <canvas id="previewCanvas" class="preview-image"></canvas>
+                    <div class="generated-url" id="generatedUrl"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="examples">
+            <h2>Usage Examples</h2>
+            <div class="example-grid">
+                <div class="example-item">
+                    <h3>Basic Usage</h3>
+                    <img src="data:image/svg+xml,%3Csvg width='300' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Crect x='1' y='1' width='298' height='198' fill='none' stroke='%23e5e7eb' stroke-width='2'/%3E%3Ctext x='150' y='60' text-anchor='middle' font-size='30' font-family='Arial'%3E👋%3C/text%3E%3Ctext x='150' y='100' text-anchor='middle' font-size='16' font-weight='bold' fill='%23374151'%3EHello%3C/text%3E%3Ctext x='150' y='130' text-anchor='middle' font-size='8' fill='%23374151' opacity='0.8'%3EWorld%3C/text%3E%3C/svg%3E" alt="Basic example">
+                    <div class="example-code">
+                        &lt;img src="your-url/api/image?width=300&height=200&header=Hello&body=World&emoji=👋" alt="placeholder"&gt;
+                    </div>
+                </div>
+
+                <div class="example-item">
+                    <h3>Custom Colors</h3>
+                    <img src="data:image/svg+xml,%3Csvg width='300' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23dcfce7'/%3E%3Crect x='1' y='1' width='298' height='198' fill='none' stroke='%23e5e7eb' stroke-width='2'/%3E%3Ctext x='150' y='60' text-anchor='middle' font-size='30' font-family='Arial'%3E✅%3C/text%3E%3Ctext x='150' y='100' text-anchor='middle' font-size='16' font-weight='bold' fill='%23166534'%3ESuccess%3C/text%3E%3Ctext x='150' y='130' text-anchor='middle' font-size='8' fill='%23166534' opacity='0.8'%3EGreat job!%3C/text%3E%3C/svg%3E" alt="Custom colors example">
+                    <div class="example-code">
+                        &lt;img src="your-url/api/image?width=300&height=200&header=Success&body=Great job!&emoji=✅&bg=dcfce7&text=166534" alt="placeholder"&gt;
+                    </div>
+                </div>
+
+                <div class="example-item">
+                    <h3>Banner Style</h3>
+                    <img src="data:image/svg+xml,%3Csvg width='300' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23dbeafe'/%3E%3Crect x='1' y='1' width='298' height='98' fill='none' stroke='%23e5e7eb' stroke-width='2'/%3E%3Ctext x='150' y='30' text-anchor='middle' font-size='15' font-family='Arial'%3E🚀%3C/text%3E%3Ctext x='150' y='50' text-anchor='middle' font-size='8' font-weight='bold' fill='%231e40af'%3EWelcome%3C/text%3E%3Ctext x='150' y='70' text-anchor='middle' font-size='4' fill='%231e40af' opacity='0.8'%3EGet started today%3C/text%3E%3C/svg%3E" alt="Banner example">
+                    <div class="example-code">
+                        &lt;img src="your-url/api/image?width=600&height=150&header=Welcome&body=Get started today&emoji=🚀&bg=dbeafe&text=1e40af" alt="placeholder"&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="docs">
+            <h2>API Documentation</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>width</code></td>
+                        <td>number</td>
+                        <td>400</td>
+                        <td>Image width in pixels (100-1200)</td>
+                    </tr>
+                    <tr>
+                        <td><code>height</code></td>
+                        <td>number</td>
+                        <td>300</td>
+                        <td>Image height in pixels (100-1200)</td>
+                    </tr>
+                    <tr>
+                        <td><code>header</code></td>
+                        <td>string</td>
+                        <td>"Placeholder"</td>
+                        <td>Header text (URL encoded, max 50 chars)</td>
+                    </tr>
+                    <tr>
+                        <td><code>body</code></td>
+                        <td>string</td>
+                        <td>"Image"</td>
+                        <td>Body text (URL encoded, max 200 chars)</td>
+                    </tr>
+                    <tr>
+                        <td><code>emoji</code></td>
+                        <td>string</td>
+                        <td>"🎨"</td>
+                        <td>Emoji character (URL encoded)</td>
+                    </tr>
+                    <tr>
+                        <td><code>bg</code></td>
+                        <td>string</td>
+                        <td>"f3f4f6"</td>
+                        <td>Background color (hex without #)</td>
+                    </tr>
+                    <tr>
+                        <td><code>text</code></td>
+                        <td>string</td>
+                        <td>"374151"</td>
+                        <td>Text color (hex without #)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Usage Examples</h3>
+            <div class="example-code">
+                # Basic usage
+                GET /api/image?width=400&height=300&header=Hello&body=World&emoji=🎨
+
+                # With custom colors
+                GET /api/image?width=600&height=400&header=Success&body=Task completed&emoji=✅&bg=dcfce7&text=166534
+
+                # Banner with encoded text
+                GET /api/image?width=800&height=200&header=Welcome%20Back&body=Ready%20to%20continue%3F&emoji=👋&bg=dbeafe&text=1e40af
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set the service URL display
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceUrlElement = document.getElementById('serviceUrlDisplay');
+            const currentUrl = window.location.origin;
+            serviceUrlElement.innerHTML = `<strong>Service URL:</strong> ${currentUrl}/api/image?width=400&height=300&header=Hello&body=World&emoji=🎨&bg=f3f4f6&text=374151`;
+        });
+
+        // Generate image on canvas
+        function generateImageOnCanvas(canvas, params) {
+            const ctx = canvas.getContext('2d');
+            const { width, height, header, body, emoji, bg, text } = params;
+            
+            // Set canvas size
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Fill background
+            ctx.fillStyle = `#${bg}`;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Add border
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(1, 1, width - 2, height - 2);
+            
+            // Calculate responsive font sizes
+            const emojiSize = Math.min(width, height) * 0.15;
+            const headerSize = Math.min(width, height) * 0.08;
+            const bodySize = Math.min(width, height) * 0.04;
+            
+            // Draw emoji
+            ctx.font = `${emojiSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, width / 2, height * 0.3);
+            
+            // Draw header text
+            ctx.fillStyle = `#${text}`;
+            ctx.font = `bold ${headerSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Word wrap header
+            const headerWords = header.split(' ');
+            const maxHeaderWidth = width * 0.8;
+            let headerLine = '';
+            const headerLines = [];
+            
+            for (let i = 0; i < headerWords.length; i++) {
+                const testLine = headerLine + headerWords[i] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                
+                if (testWidth > maxHeaderWidth && i > 0) {
+                    headerLines.push(headerLine);
+                    headerLine = headerWords[i] + ' ';
+                } else {
+                    headerLine = testLine;
+                }
+            }
+            headerLines.push(headerLine);
+            
+            // Draw header lines
+            const headerStartY = height * 0.5;
+            headerLines.forEach((line, index) => {
+                ctx.fillText(line.trim(), width / 2, headerStartY + (index * headerSize * 1.2));
+            });
+            
+            // Draw body text
+            ctx.font = `${bodySize}px Arial`;
+            ctx.fillStyle = `#${text}`;
+            ctx.globalAlpha = 0.8;
+            
+            // Word wrap body text
+            const bodyWords = body.split(' ');
+            const maxBodyWidth = width * 0.7;
+            let bodyLine = '';
+            const bodyLines = [];
+            
+            for (let i = 0; i < bodyWords.length; i++) {
+                const testLine = bodyLine + bodyWords[i] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                
+                if (testWidth > maxBodyWidth && i > 0) {
+                    bodyLines.push(bodyLine);
+                    bodyLine = bodyWords[i] + ' ';
+                } else {
+                    bodyLine = testLine;
+                }
+            }
+            bodyLines.push(bodyLine);
+            
+            // Draw body lines
+            const bodyStartY = height * 0.65;
+            bodyLines.forEach((line, index) => {
+                if (bodyStartY + (index * bodySize * 1.4) < height - 20) {
+                    ctx.fillText(line.trim(), width / 2, bodyStartY + (index * bodySize * 1.4));
+                }
+            });
+            
+            ctx.globalAlpha = 1;
+        }
+
+        // Get form values
+        function getFormValues() {
+            return {
+                width: parseInt(document.getElementById('width').value) || 400,
+                height: parseInt(document.getElementById('height').value) || 300,
+                header: document.getElementById('header').value || 'Placeholder',
+                body: document.getElementById('body').value || 'Image',
+                emoji: document.getElementById('emoji').value || '🎨',
+                bg: document.getElementById('bgColor').value.replace('#', '') || 'f3f4f6',
+                text: document.getElementById('textColor').value.replace('#', '') || '374151'
+            };
+        }
+
+        // Generate image
+        function generateImage() {
+            const canvas = document.getElementById('previewCanvas');
+            const params = getFormValues();
+            generateImageOnCanvas(canvas, params);
+            
+            // Update URL
+            const urlParams = new URLSearchParams();
+            Object.entries(params).forEach(([key, value]) => {
+                urlParams.append(key, value);
+            });
+            
+            const baseUrl = window.location.origin;
+            const imageUrl = `${baseUrl}/api/image?${urlParams.toString()}`;
+            document.getElementById('generatedUrl').textContent = imageUrl;
+        }
+
+        // Copy URL to clipboard
+        function copyUrl() {
+            const url = document.getElementById('generatedUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle color picker sync
+            document.getElementById('bgColorPicker').addEventListener('input', (e) => {
+                document.getElementById('bgColor').value = e.target.value.replace('#', '');
+            });
+            
+            document.getElementById('textColorPicker').addEventListener('input', (e) => {
+                document.getElementById('textColor').value = e.target.value.replace('#', '');
+            });
+            
+            document.getElementById('bgColor').addEventListener('input', (e) => {
+                document.getElementById('bgColorPicker').value = '#' + e.target.value.replace('#', '');
+            });
+            
+            document.getElementById('textColor').addEventListener('input', (e) => {
+                document.getElementById('textColorPicker').value = '#' + e.target.value.replace('#', '');
+            });
+            
+            // Handle size presets
+            document.querySelectorAll('.size-preset').forEach(preset => {
+                preset.addEventListener('click', () => {
+                    document.querySelectorAll('.size-preset').forEach(p => p.classList.remove('active'));
+                    preset.classList.add('active');
+                    
+                    document.getElementById('width').value = preset.dataset.width;
+                    document.getElementById('height').value = preset.dataset.height;
+                });
+            });
+            
+            // Generate initial image
+            generateImage();
+        });
+    </script>
+</body>
+</html>
