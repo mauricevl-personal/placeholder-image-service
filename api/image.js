@@ -1,15 +1,15 @@
 import { ImageResponse } from '@vercel/og';
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   try {
-    const { searchParams } = new URL(req.url, `http://${req.headers.host}`);
+    const { searchParams } = new URL(req.url);
     
-    // Extract parameters with defaults
+    // Extract parameters with defaults and validation
     const width = Math.min(Math.max(parseInt(searchParams.get('width')) || 400, 100), 1200);
     const height = Math.min(Math.max(parseInt(searchParams.get('height')) || 300, 100), 1200);
-    const header = decodeURIComponent(searchParams.get('header') || 'Placeholder');
-    const body = decodeURIComponent(searchParams.get('body') || 'Image');
-    const emoji = decodeURIComponent(searchParams.get('emoji') || '🎨');
+    const header = searchParams.get('header') || 'Placeholder';
+    const body = searchParams.get('body') || 'Image';
+    const emoji = searchParams.get('emoji') || '🎨';
     const bg = searchParams.get('bg') || 'f3f4f6';
     const text = searchParams.get('text') || '374151';
 
@@ -24,16 +24,14 @@ export default async function handler(req, res) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: '"Inter", "Arial", sans-serif',
-            border: '2px solid #e5e7eb',
-            boxSizing: 'border-box',
+            fontFamily: 'system-ui, sans-serif',
+            padding: '20px',
           }}
         >
           <div
             style={{
               fontSize: Math.min(width, height) * 0.15,
-              marginBottom: height * 0.05,
-              lineHeight: 1,
+              marginBottom: '10px',
             }}
           >
             {emoji}
@@ -45,9 +43,8 @@ export default async function handler(req, res) {
               fontWeight: 'bold',
               color: `#${text}`,
               textAlign: 'center',
-              marginBottom: height * 0.03,
+              marginBottom: '10px',
               maxWidth: '80%',
-              lineHeight: 1.2,
             }}
           >
             {header}
@@ -60,7 +57,6 @@ export default async function handler(req, res) {
               textAlign: 'center',
               opacity: 0.8,
               maxWidth: '70%',
-              lineHeight: 1.4,
             }}
           >
             {body}
@@ -70,13 +66,19 @@ export default async function handler(req, res) {
       {
         width,
         height,
-        headers: {
-          'Cache-Control': 'public, max-age=86400',
-        },
       },
     );
   } catch (error) {
-    console.error('Error generating image:', error);
-    return new Response(`Error: ${error.message}`, { status: 500 });
+    // Return a simple error response
+    return new Response(
+      JSON.stringify({ 
+        error: 'Failed to generate image', 
+        message: error.message 
+      }), 
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }
