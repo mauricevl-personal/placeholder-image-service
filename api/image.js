@@ -10,8 +10,8 @@ export default function handler(req, res) {
     const bg = url.searchParams.get('bg') || 'f3f4f6';
     const text = url.searchParams.get('text') || '374151';
 
-    // Font family for all text
-    const fontFamily = '-apple-system, "system-ui", "Segoe UI", "PingFang SC", HelveticaNeue';
+    // Simplified font family without problematic quotes
+    const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
 
     // Simple SVG template with tighter spacing and link
     const svg = `
@@ -19,22 +19,17 @@ export default function handler(req, res) {
   <rect width="100%" height="100%" fill="#${bg}"/>
   <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#ddd" stroke-width="1"/>
   
-  <!-- Emoji -->
   <text x="50%" y="25%" text-anchor="middle" font-size="40" font-family="${fontFamily}">${emoji}</text>
   
-  <!-- Header (24px, bold) -->
   <text x="50%" y="35%" text-anchor="middle" font-size="24" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
   
-  <!-- Body (16px) -->
   <text x="50%" y="50%" text-anchor="middle" font-size="16" fill="#${text}" font-family="${fontFamily}">${body}</text>
   
-  <!-- Clickable Button with Link -->
   <a href="https://shamancloud.com" target="_blank">
-    <rect x="${width/2 - 60}" y="${height * 0.62}" width="120" height="35" fill="#04A56F" rx="6" ry="6" style="cursor:pointer"/>
-    <text x="50%" y="${height * 0.62 + 23}" text-anchor="middle" font-size="16" font-weight="normal" fill="white" font-family="${fontFamily}" style="cursor:pointer">Replace</text>
+    <rect x="${width/2 - 60}" y="${height * 0.62}" width="120" height="35" fill="#04A56F" rx="6" ry="6"/>
+    <text x="50%" y="${height * 0.62 + 23}" text-anchor="middle" font-size="16" fill="white" font-family="${fontFamily}">Replace</text>
   </a>
   
-  <!-- Link text -->
   <text x="50%" y="${height * 0.85}" text-anchor="middle" font-size="12" fill="#666" font-family="${fontFamily}">shamancloud.com</text>
 </svg>`;
 
