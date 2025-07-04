@@ -10,27 +10,33 @@ export default function handler(req, res) {
     const bg = url.searchParams.get('bg') || 'f3f4f6';
     const text = url.searchParams.get('text') || '374151';
 
-    // Simplified font family without problematic quotes
+    // Fixed font sizes
+    const emojiSize = 40;
+    const headerSize = 24;
+    const bodySize = 16;
+
+    // Font family
     const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
 
-    // Simple SVG template with tighter spacing and link
+    // Calculate relative positions from header at 50%
+    const headerPos = 50; // Header at 50% of height
+    const spacing = 8; // Spacing in percentage points
+    const emojiPos = headerPos - spacing; // Icon above header
+    const bodyPos = headerPos + spacing; // Body below header
+
     const svg = `
 <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#${bg}"/>
   <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#ddd" stroke-width="1"/>
   
-  <text x="50%" y="25%" text-anchor="middle" font-size="40" font-family="${fontFamily}">${emoji}</text>
+  <!-- Emoji (above header) -->
+  <text x="50%" y="${emojiPos}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
-  <text x="50%" y="35%" text-anchor="middle" font-size="24" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
+  <!-- Header (at 50%) -->
+  <text x="50%" y="${headerPos}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
   
-  <text x="50%" y="50%" text-anchor="middle" font-size="16" fill="#${text}" font-family="${fontFamily}">${body}</text>
-  
-  <a href="https://shamancloud.com" target="_blank">
-    <rect x="${width/2 - 60}" y="${height * 0.62}" width="120" height="35" fill="#04A56F" rx="6" ry="6"/>
-    <text x="50%" y="${height * 0.62 + 23}" text-anchor="middle" font-size="16" fill="white" font-family="${fontFamily}">Replace</text>
-  </a>
-  
-  <text x="50%" y="${height * 0.85}" text-anchor="middle" font-size="12" fill="#666" font-family="${fontFamily}">shamancloud.com</text>
+  <!-- Body (below header) -->
+  <text x="50%" y="${bodyPos}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${body}</text>
 </svg>`;
 
     // Set headers and return SVG
