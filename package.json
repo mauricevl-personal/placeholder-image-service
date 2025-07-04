@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "URL-based placeholder image generator",
   "main": "index.html",
+  "type": "module",
   "dependencies": {
     "@vercel/og": "^0.6.2"
   },
