@@ -1,0 +1,12 @@
+{
+  "name": "placeholder-image-service",
+  "version": "1.0.0",
+  "description": "URL-based placeholder image generator",
+  "main": "index.html",
+  "dependencies": {
+    "@vercel/og": "^0.6.2"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
