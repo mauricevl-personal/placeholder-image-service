@@ -1,75 +1,32 @@
-export default async function handler(req) {
+export default function handler(req, res) {
   try {
-    const { searchParams } = new URL(req.url);
+    // Parse URL parameters
+    const url = new URL(req.url, `https://${req.headers.host}`);
+    const width = url.searchParams.get('width') || '400';
+    const height = url.searchParams.get('height') || '300';
+    const header = url.searchParams.get('header') || 'Placeholder';
+    const body = url.searchParams.get('body') || 'Image';
+    const emoji = url.searchParams.get('emoji') || '🎨';
+    const bg = url.searchParams.get('bg') || 'f3f4f6';
+    const text = url.searchParams.get('text') || '374151';
+
+    // Simple SVG template
+    const svg = `
+<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#${bg}"/>
+  <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="50%" y="30%" text-anchor="middle" font-size="40" font-family="Arial">${emoji}</text>
+  <text x="50%" y="50%" text-anchor="middle" font-size="20" font-weight="bold" fill="#${text}" font-family="Arial">${header}</text>
+  <text x="50%" y="70%" text-anchor="middle" font-size="14" fill="#${text}" font-family="Arial">${body}</text>
+</svg>`;
+
+    // Set headers and return SVG
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send(svg);
     
-    // Extract parameters with defaults
-    const width = Math.min(Math.max(parseInt(searchParams.get('width')) || 400, 100), 1200);
-    const height = Math.min(Math.max(parseInt(searchParams.get('height')) || 300, 100), 1200);
-    const header = searchParams.get('header') || 'Placeholder';
-    const body = searchParams.get('body') || 'Image';
-    const emoji = searchParams.get('emoji') || '🎨';
-    const bg = searchParams.get('bg') || 'f3f4f6';
-    const text = searchParams.get('text') || '374151';
-
-    // Calculate font sizes
-    const emojiSize = Math.min(width, height) * 0.15;
-    const headerSize = Math.min(width, height) * 0.08;
-    const bodySize = Math.min(width, height) * 0.04;
-
-    // Generate SVG
-    const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <!-- Background -->
-      <rect width="100%" height="100%" fill="#${bg}" />
-      
-      <!-- Border -->
-      <rect x="1" y="1" width="${width-2}" height="${height-2}" 
-            fill="none" stroke="#e5e7eb" stroke-width="2" />
-      
-      <!-- Emoji -->
-      <text x="${width/2}" y="${height * 0.3}" 
-            text-anchor="middle" dominant-baseline="middle" 
-            font-size="${emojiSize}px" font-family="Arial, sans-serif">
-        ${emoji}
-      </text>
-      
-      <!-- Header Text -->
-      <text x="${width/2}" y="${height * 0.5}" 
-            text-anchor="middle" dominant-baseline="middle" 
-            font-size="${headerSize}px" font-weight="bold" 
-            font-family="Arial, sans-serif" fill="#${text}">
-        ${header}
-      </text>
-      
-      <!-- Body Text -->
-      <text x="${width/2}" y="${height * 0.65}" 
-            text-anchor="middle" dominant-baseline="middle" 
-            font-size="${bodySize}px" 
-            font-family="Arial, sans-serif" fill="#${text}" opacity="0.8">
-        ${body}
-      </text>
-    </svg>`;
-
-    return new Response(svg, {
-      headers: {
-        'Content-Type': 'image/svg+xml',
-        'Cache-Control': 'public, max-age=86400',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
   } catch (error) {
-    console.error('Image generation error:', error);
-    
-    // Return error SVG
-    const errorSvg = `<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#fee2e2" />
-      <text x="200" y="150" text-anchor="middle" font-size="16px" fill="#dc2626">
-        Error generating image
-      </text>
-    </svg>`;
-    
-    return new Response(errorSvg, {
-      status: 500,
-      headers: { 'Content-Type': 'image/svg+xml' }
-    });
+    // Return simple error
+    res.status(500).send('Error generating image');
   }
 }
