@@ -2,8 +2,8 @@ export default function handler(req, res) {
   try {
     // Parse URL parameters
     const url = new URL(req.url, `https://${req.headers.host}`);
-    const width = parseInt(url.searchParams.get('width')) || 400;
-    const height = parseInt(url.searchParams.get('height')) || 200;
+    const width = parseInt(url.searchParams.get('width')) || 600; // Default to larger base size
+    const height = parseInt(url.searchParams.get('height')) || 300;
     const header = url.searchParams.get('header') || 'Add CSAT Block';
     const body = url.searchParams.get('body') || '';
     const emoji = url.searchParams.get('emoji') || '⭐';
@@ -12,12 +12,16 @@ export default function handler(req, res) {
     const stroke = url.searchParams.get('stroke') || 'dddddd';
     const layout = url.searchParams.get('layout') || 'vertical';
     
-    // Font sizes - use custom or calculate relative sizes
+    // Check if this is a responsive request (add &responsive=true to URL)
+    const isResponsive = url.searchParams.get('responsive') === 'true';
+    
+    // Font sizes based on the actual SVG canvas size, not display size
+    // This ensures consistent optical appearance regardless of how the image is displayed
+    let emojiSize, headerSize, bodySize;
+    
     const customEmojiSize = url.searchParams.get('emojiSize');
     const customHeaderSize = url.searchParams.get('headerSize');
     const customBodySize = url.searchParams.get('bodySize');
-    
-    let emojiSize, headerSize, bodySize;
     
     if (customEmojiSize && customHeaderSize && customBodySize) {
       // Use custom sizes from form
@@ -25,36 +29,34 @@ export default function handler(req, res) {
       headerSize = parseInt(customHeaderSize);
       bodySize = parseInt(customBodySize);
     } else {
-      // Relative font sizes based on SVG viewport units
-      // These percentages will scale with the image size when displayed
-      emojiSize = width * 0.095;  // ~9.5% of width (38px at 400px = 9.5%)
-      headerSize = width * 0.06;  // ~6% of width (24px at 400px = 6%)
-      bodySize = width * 0.035;   // ~3.5% of width (14px at 400px = 3.5%)
+      // Calculate font sizes as percentages of the SVG viewBox width
+      // These will appear optically consistent when the SVG is scaled
+      emojiSize = Math.max(width * 0.08, 24);  // 8% of width, min 24px
+      headerSize = Math.max(width * 0.04, 16); // 4% of width, min 16px  
+      bodySize = Math.max(width * 0.024, 12);  // 2.4% of width, min 12px
       
-      // Set reasonable min/max limits to prevent too small or too large text
-      emojiSize = Math.max(Math.min(emojiSize, 80), 20);
-      headerSize = Math.max(Math.min(headerSize, 48), 12);
-      bodySize = Math.max(Math.min(bodySize, 28), 8);
+      // Set reasonable maximums
+      emojiSize = Math.min(emojiSize, 80);
+      headerSize = Math.min(headerSize, 48);
+      bodySize = Math.min(bodySize, 28);
     }
 
     // Font family
     const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
 
-    // Content area positioning (same as before)
-    const contentAreaHeight = 50; // 50% of image height for content
-    const contentStartY = 50 - (contentAreaHeight / 2); // Center the content area vertically
+    // Content area positioning
+    const contentAreaHeight = 50;
+    const contentStartY = 50 - (contentAreaHeight / 2);
     
-    // Element positions within the content area
-    const emojiOffsetInContent = 0;    // 0% of content area (top)
-    const headerOffsetInContent = 50;  // 50% of content area (middle)
-    const bodyOffsetInContent = 100;   // 100% of content area (bottom)
+    const emojiOffsetInContent = 0;
+    const headerOffsetInContent = 50;
+    const bodyOffsetInContent = 100;
     
-    // Calculate final positions
     const emojiY = contentStartY + (emojiOffsetInContent * contentAreaHeight / 100);
     const headerY = contentStartY + (headerOffsetInContent * contentAreaHeight / 100);
     const bodyY = contentStartY + (bodyOffsetInContent * contentAreaHeight / 100);
 
-    // Layout positioning override
+    // Layout positioning
     let finalEmojiY, finalHeaderY, finalBodyY;
     
     switch (layout) {
@@ -80,9 +82,9 @@ export default function handler(req, res) {
         break;
     }
 
-    // Generate SVG with viewBox for perfect scaling
+    // Generate SVG - remove viewBox to prevent scaling issues in email editors
     const svg = `
-<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#${bg}"/>
   <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#${stroke}" stroke-width="1"/>
   
