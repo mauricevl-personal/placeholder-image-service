@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -48,19 +48,19 @@
             padding: 1rem;
             border-radius: 8px;
             font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
+            font-size: 1rem;
             word-break: break-all;
             margin-bottom: 2rem;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 400px 1fr;
             gap: 2rem;
             margin-bottom: 3rem;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .grid {
                 grid-template-columns: 1fr;
             }
@@ -71,12 +71,13 @@
             border-radius: 12px;
             padding: 2rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            height: fit-content;
         }
 
         .card h2 {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: #1e293b;
         }
 
@@ -92,7 +93,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #e2e8f0;
@@ -102,14 +104,10 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #3b82f6;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
         }
 
         .color-input {
@@ -130,37 +128,49 @@
             flex: 1;
         }
 
-        .size-presets {
+        .emoji-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
             gap: 0.5rem;
             margin-bottom: 1rem;
         }
 
-        .size-preset {
-            padding: 0.5rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
+        .emoji-option {
+            padding: 0.75rem;
             text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
+            background: white;
         }
 
-        .size-preset:hover {
+        .emoji-option:hover {
             border-color: #3b82f6;
             background: #f1f5f9;
         }
 
-        .size-preset.active {
+        .emoji-option.selected {
             border-color: #3b82f6;
             background: #dbeafe;
         }
 
-        .size-inputs {
+        .range-group {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr auto;
             gap: 1rem;
+            align-items: center;
+        }
+
+        .range-group input[type="range"] {
+            width: 100%;
+        }
+
+        .range-value {
+            min-width: 50px;
+            font-weight: 600;
+            color: #1e293b;
         }
 
         .button {
@@ -173,31 +183,55 @@
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            width: 100%;
         }
 
         .button:hover {
             background: #2563eb;
         }
 
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
         .preview-container {
             text-align: center;
         }
 
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .preview-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
         .preview-image {
-            max-width: 100%;
+            width: 100%;
             height: auto;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .preview-url {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            word-break: break-all;
+            color: #1e293b;
         }
 
         .generated-url {
@@ -212,96 +246,30 @@
             color: #1e293b;
         }
 
-        .examples {
-            margin-top: 3rem;
-        }
-
-        .examples h2 {
-            font-size: 2rem;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 2rem;
-            color: #1e293b;
-        }
-
-        .example-grid {
+        .position-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
         }
 
-        .example-item {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .example-item h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #1e293b;
-        }
-
-        .example-item img {
-            width: 100%;
-            height: auto;
+        .position-option {
+            padding: 0.5rem;
+            text-align: center;
+            border: 2px solid #e2e8f0;
             border-radius: 6px;
-            margin-bottom: 1rem;
-        }
-
-        .example-code {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 0.75rem;
-            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
             font-size: 0.8rem;
-            overflow-x: auto;
         }
 
-        .docs {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 3rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .docs h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: #1e293b;
-        }
-
-        .docs table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 2rem;
-        }
-
-        .docs th,
-        .docs td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .docs th {
-            background: #f8fafc;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .docs code {
+        .position-option:hover {
+            border-color: #3b82f6;
             background: #f1f5f9;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            color: #1e293b;
+        }
+
+        .position-option.selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
         }
     </style>
 </head>
@@ -309,31 +277,39 @@
     <div class="container">
         <div class="header">
             <h1>Placeholder Image Service</h1>
-            <p>Generate custom placeholder images via URL parameters</p>
+            <p>Advanced form to test placeholder designs for email templates</p>
             <div class="service-url" id="serviceUrlDisplay">
-                <strong>Service URL:</strong> [Your URL will appear here after deployment]
+                <strong>Service URL:</strong> <span id="currentUrl"></span>
             </div>
         </div>
 
         <div class="grid">
             <div class="card">
-                <h2>Image Generator</h2>
-                <form id="imageForm">
+                <h2>Design Your Placeholder</h2>
+                <form id="placeholderForm">
+                    
+                    <!-- Emoji Selection -->
                     <div class="form-group">
-                        <label for="emoji">Emoji</label>
-                        <input type="text" id="emoji" value="🎨" maxlength="10">
+                        <label>Select Emoji</label>
+                        <div class="emoji-grid" id="emojiGrid">
+                            <!-- Professional emoji options -->
+                        </div>
+                        <input type="text" id="customEmoji" placeholder="Or enter custom emoji" maxlength="10">
                     </div>
 
+                    <!-- Header Text -->
                     <div class="form-group">
-                        <label for="header">Header Text</label>
-                        <input type="text" id="header" value="Your Header Here" maxlength="50">
+                        <label for="headerText">Header Text</label>
+                        <input type="text" id="headerText" value="Add CSAT Block" maxlength="50">
                     </div>
 
+                    <!-- Body Text -->
                     <div class="form-group">
-                        <label for="body">Body Text</label>
-                        <textarea id="body" maxlength="200">Add your description or body text here.</textarea>
+                        <label for="bodyText">Body Text (optional)</label>
+                        <textarea id="bodyText" rows="2" maxlength="200" placeholder="Please replace with your local CSAT block"></textarea>
                     </div>
 
+                    <!-- Background Color -->
                     <div class="form-group">
                         <label for="bgColor">Background Color</label>
                         <div class="color-input">
@@ -342,6 +318,7 @@
                         </div>
                     </div>
 
+                    <!-- Text Color -->
                     <div class="form-group">
                         <label for="textColor">Text Color</label>
                         <div class="color-input">
@@ -350,290 +327,155 @@
                         </div>
                     </div>
 
+                    <!-- Stroke Color -->
                     <div class="form-group">
-                        <label>Size Presets</label>
-                        <div class="size-presets">
-                            <div class="size-preset active" data-width="400" data-height="300">Square<br>400×300</div>
-                            <div class="size-preset" data-width="600" data-height="400">Landscape<br>600×400</div>
-                            <div class="size-preset" data-width="400" data-height="600">Portrait<br>400×600</div>
-                            <div class="size-preset" data-width="800" data-height="200">Banner<br>800×200</div>
+                        <label for="strokeColor">Border Color</label>
+                        <div class="color-input">
+                            <input type="color" id="strokeColorPicker" value="#dddddd">
+                            <input type="text" id="strokeColor" value="dddddd" maxlength="7">
                         </div>
-                        <div class="size-inputs">
-                            <div>
-                                <label for="width">Width</label>
-                                <input type="number" id="width" value="400" min="100" max="1200">
+                    </div>
+
+                    <!-- Font Sizes -->
+                    <div class="form-group">
+                        <label>Emoji Size</label>
+                        <div class="range-group">
+                            <input type="range" id="emojiSize" min="16" max="80" value="40">
+                            <span class="range-value" id="emojiSizeValue">40px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Header Font Size</label>
+                        <div class="range-group">
+                            <input type="range" id="headerSize" min="8" max="40" value="20">
+                            <span class="range-value" id="headerSizeValue">20px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Body Font Size</label>
+                        <div class="range-group">
+                            <input type="range" id="bodySize" min="6" max="24" value="14">
+                            <span class="range-value" id="bodySizeValue">14px</span>
+                        </div>
+                    </div>
+
+                    <!-- Element Positions -->
+                    <div class="form-group">
+                        <label>Layout Position</label>
+                        <div class="position-grid" id="positionGrid">
+                            <div class="position-option selected" data-layout="vertical">
+                                <div>📍</div>
+                                <div>📝</div>
+                                <div>📄</div>
+                                <div>Vertical</div>
                             </div>
-                            <div>
-                                <label for="height">Height</label>
-                                <input type="number" id="height" value="300" min="100" max="1200">
+                            <div class="position-option" data-layout="compact">
+                                <div>📍📝</div>
+                                <div>📄</div>
+                                <div>Compact</div>
+                            </div>
+                            <div class="position-option" data-layout="minimal">
+                                <div>📍</div>
+                                <div>📝</div>
+                                <div>Minimal</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="button-group">
-                        <button type="button" class="button" onclick="generateImage()">🔄 Generate</button>
-                        <button type="button" class="button" onclick="copyUrl()">📋 Copy URL</button>
-                    </div>
+                    <button type="button" class="button" onclick="generatePreviews()">🔄 Generate Previews</button>
                 </form>
             </div>
 
             <div class="card">
-                <h2>Preview</h2>
+                <h2>Live Previews</h2>
                 <div class="preview-container">
-                    <canvas id="previewCanvas" class="preview-image"></canvas>
-                    <div class="generated-url" id="generatedUrl"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="examples">
-            <h2>Usage Examples</h2>
-            <div class="example-grid">
-                <div class="example-item">
-                    <h3>Basic Usage</h3>
-                    <img src="data:image/svg+xml,%3Csvg width='300' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Crect x='1' y='1' width='298' height='198' fill='none' stroke='%23e5e7eb' stroke-width='2'/%3E%3Ctext x='150' y='60' text-anchor='middle' font-size='30' font-family='Arial'%3E👋%3C/text%3E%3Ctext x='150' y='100' text-anchor='middle' font-size='16' font-weight='bold' fill='%23374151'%3EHello%3C/text%3E%3Ctext x='150' y='130' text-anchor='middle' font-size='8' fill='%23374151' opacity='0.8'%3EWorld%3C/text%3E%3C/svg%3E" alt="Basic example">
-                    <div class="example-code">
-                        &lt;img src="your-url/api/image?width=300&height=200&header=Hello&body=World&emoji=👋" alt="placeholder"&gt;
+                    <div class="preview-grid" id="previewGrid">
+                        <!-- Preview items will be generated here -->
+                    </div>
+                    <div class="generated-url" id="generatedUrl">
+                        Base URL will appear here after generation
                     </div>
                 </div>
-
-                <div class="example-item">
-                    <h3>Custom Colors</h3>
-                    <img src="data:image/svg+xml,%3Csvg width='300' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23dcfce7'/%3E%3Crect x='1' y='1' width='298' height='198' fill='none' stroke='%23e5e7eb' stroke-width='2'/%3E%3Ctext x='150' y='60' text-anchor='middle' font-size='30' font-family='Arial'%3E✅%3C/text%3E%3Ctext x='150' y='100' text-anchor='middle' font-size='16' font-weight='bold' fill='%23166534'%3ESuccess%3C/text%3E%3Ctext x='150' y='130' text-anchor='middle' font-size='8' fill='%23166534' opacity='0.8'%3EGreat job!%3C/text%3E%3C/svg%3E" alt="Custom colors example">
-                    <div class="example-code">
-                        &lt;img src="your-url/api/image?width=300&height=200&header=Success&body=Great job!&emoji=✅&bg=dcfce7&text=166534" alt="placeholder"&gt;
-                    </div>
-                </div>
-
-                <div class="example-item">
-                    <h3>Banner Style</h3>
-                    <img src="data:image/svg+xml,%3Csvg width='300' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23dbeafe'/%3E%3Crect x='1' y='1' width='298' height='98' fill='none' stroke='%23e5e7eb' stroke-width='2'/%3E%3Ctext x='150' y='30' text-anchor='middle' font-size='15' font-family='Arial'%3E🚀%3C/text%3E%3Ctext x='150' y='50' text-anchor='middle' font-size='8' font-weight='bold' fill='%231e40af'%3EWelcome%3C/text%3E%3Ctext x='150' y='70' text-anchor='middle' font-size='4' fill='%231e40af' opacity='0.8'%3EGet started today%3C/text%3E%3C/svg%3E" alt="Banner example">
-                    <div class="example-code">
-                        &lt;img src="your-url/api/image?width=600&height=150&header=Welcome&body=Get started today&emoji=🚀&bg=dbeafe&text=1e40af" alt="placeholder"&gt;
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="docs">
-            <h2>API Documentation</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Type</th>
-                        <th>Default</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>width</code></td>
-                        <td>number</td>
-                        <td>400</td>
-                        <td>Image width in pixels (100-1200)</td>
-                    </tr>
-                    <tr>
-                        <td><code>height</code></td>
-                        <td>number</td>
-                        <td>300</td>
-                        <td>Image height in pixels (100-1200)</td>
-                    </tr>
-                    <tr>
-                        <td><code>header</code></td>
-                        <td>string</td>
-                        <td>"Placeholder"</td>
-                        <td>Header text (URL encoded, max 50 chars)</td>
-                    </tr>
-                    <tr>
-                        <td><code>body</code></td>
-                        <td>string</td>
-                        <td>"Image"</td>
-                        <td>Body text (URL encoded, max 200 chars)</td>
-                    </tr>
-                    <tr>
-                        <td><code>emoji</code></td>
-                        <td>string</td>
-                        <td>"🎨"</td>
-                        <td>Emoji character (URL encoded)</td>
-                    </tr>
-                    <tr>
-                        <td><code>bg</code></td>
-                        <td>string</td>
-                        <td>"f3f4f6"</td>
-                        <td>Background color (hex without #)</td>
-                    </tr>
-                    <tr>
-                        <td><code>text</code></td>
-                        <td>string</td>
-                        <td>"374151"</td>
-                        <td>Text color (hex without #)</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Usage Examples</h3>
-            <div class="example-code">
-                # Basic usage
-                GET /api/image?width=400&height=300&header=Hello&body=World&emoji=🎨
-
-                # With custom colors
-                GET /api/image?width=600&height=400&header=Success&body=Task completed&emoji=✅&bg=dcfce7&text=166534
-
-                # Banner with encoded text
-                GET /api/image?width=800&height=200&header=Welcome%20Back&body=Ready%20to%20continue%3F&emoji=👋&bg=dbeafe&text=1e40af
             </div>
         </div>
     </div>
 
     <script>
-        // Set the service URL display
+        // Professional emoji options
+        const professionalEmojis = {
+            'CSAT/Rating': ['⭐', '📊', '📈', '🎯', '📋'],
+            'Email Footer': ['📧', '✉️', '📬', '📄', '🔗'],
+            'Content Module': ['📑', '📄', '🗂️', '📰', '🔳'],
+            'Hero Image': ['🖼️', '📷', '🖥️', '🎨', '⬜'],
+            'General': ['🔍', '➕', '📌', '💼', '🏢']
+        };
+
+        // Preview sizes
+        const previewSizes = [
+            { width: 600, height: 300, name: 'Desktop Full (600×300)' },
+            { width: 300, height: 150, name: 'Mobile/Half (300×150)' },
+            { width: 200, height: 100, name: 'Narrow Column (200×100)' },
+            { width: 1200, height: 450, name: 'Hero Banner (1200×450)' }
+        ];
+
+        let selectedEmoji = '⭐';
+        let selectedLayout = 'vertical';
+
+        // Initialize the form
         document.addEventListener('DOMContentLoaded', function() {
-            const serviceUrlElement = document.getElementById('serviceUrlDisplay');
-            const currentUrl = window.location.origin;
-            serviceUrlElement.innerHTML = `<strong>Service URL:</strong> ${currentUrl}/api/image?width=400&height=300&header=Hello&body=World&emoji=🎨&bg=f3f4f6&text=374151`;
+            // Set current URL
+            document.getElementById('currentUrl').textContent = window.location.origin + '/api/image';
+
+            // Generate emoji grid
+            generateEmojiGrid();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Generate initial previews
+            generatePreviews();
         });
 
-        // Generate image on canvas
-        function generateImageOnCanvas(canvas, params) {
-            const ctx = canvas.getContext('2d');
-            const { width, height, header, body, emoji, bg, text } = params;
+        function generateEmojiGrid() {
+            const emojiGrid = document.getElementById('emojiGrid');
             
-            // Set canvas size
-            canvas.width = width;
-            canvas.height = height;
-            
-            // Fill background
-            ctx.fillStyle = `#${bg}`;
-            ctx.fillRect(0, 0, width, height);
-            
-            // Add border
-            ctx.strokeStyle = '#e5e7eb';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(1, 1, width - 2, height - 2);
-            
-            // Calculate responsive font sizes
-            const emojiSize = Math.min(width, height) * 0.15;
-            const headerSize = Math.min(width, height) * 0.08;
-            const bodySize = Math.min(width, height) * 0.04;
-            
-            // Draw emoji
-            ctx.font = `${emojiSize}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(emoji, width / 2, height * 0.3);
-            
-            // Draw header text
-            ctx.fillStyle = `#${text}`;
-            ctx.font = `bold ${headerSize}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // Word wrap header
-            const headerWords = header.split(' ');
-            const maxHeaderWidth = width * 0.8;
-            let headerLine = '';
-            const headerLines = [];
-            
-            for (let i = 0; i < headerWords.length; i++) {
-                const testLine = headerLine + headerWords[i] + ' ';
-                const metrics = ctx.measureText(testLine);
-                const testWidth = metrics.width;
+            Object.entries(professionalEmojis).forEach(([category, emojis]) => {
+                // Add category header
+                const categoryDiv = document.createElement('div');
+                categoryDiv.style.gridColumn = '1 / -1';
+                categoryDiv.style.fontSize = '0.8rem';
+                categoryDiv.style.fontWeight = '600';
+                categoryDiv.style.color = '#64748b';
+                categoryDiv.style.marginTop = '1rem';
+                categoryDiv.style.marginBottom = '0.5rem';
+                categoryDiv.textContent = category;
+                emojiGrid.appendChild(categoryDiv);
                 
-                if (testWidth > maxHeaderWidth && i > 0) {
-                    headerLines.push(headerLine);
-                    headerLine = headerWords[i] + ' ';
-                } else {
-                    headerLine = testLine;
-                }
-            }
-            headerLines.push(headerLine);
-            
-            // Draw header lines
-            const headerStartY = height * 0.5;
-            headerLines.forEach((line, index) => {
-                ctx.fillText(line.trim(), width / 2, headerStartY + (index * headerSize * 1.2));
-            });
-            
-            // Draw body text
-            ctx.font = `${bodySize}px Arial`;
-            ctx.fillStyle = `#${text}`;
-            ctx.globalAlpha = 0.8;
-            
-            // Word wrap body text
-            const bodyWords = body.split(' ');
-            const maxBodyWidth = width * 0.7;
-            let bodyLine = '';
-            const bodyLines = [];
-            
-            for (let i = 0; i < bodyWords.length; i++) {
-                const testLine = bodyLine + bodyWords[i] + ' ';
-                const metrics = ctx.measureText(testLine);
-                const testWidth = metrics.width;
-                
-                if (testWidth > maxBodyWidth && i > 0) {
-                    bodyLines.push(bodyLine);
-                    bodyLine = bodyWords[i] + ' ';
-                } else {
-                    bodyLine = testLine;
-                }
-            }
-            bodyLines.push(bodyLine);
-            
-            // Draw body lines
-            const bodyStartY = height * 0.65;
-            bodyLines.forEach((line, index) => {
-                if (bodyStartY + (index * bodySize * 1.4) < height - 20) {
-                    ctx.fillText(line.trim(), width / 2, bodyStartY + (index * bodySize * 1.4));
-                }
-            });
-            
-            ctx.globalAlpha = 1;
-        }
-
-        // Get form values
-        function getFormValues() {
-            return {
-                width: parseInt(document.getElementById('width').value) || 400,
-                height: parseInt(document.getElementById('height').value) || 300,
-                header: document.getElementById('header').value || 'Placeholder',
-                body: document.getElementById('body').value || 'Image',
-                emoji: document.getElementById('emoji').value || '🎨',
-                bg: document.getElementById('bgColor').value.replace('#', '') || 'f3f4f6',
-                text: document.getElementById('textColor').value.replace('#', '') || '374151'
-            };
-        }
-
-        // Generate image
-        function generateImage() {
-            const canvas = document.getElementById('previewCanvas');
-            const params = getFormValues();
-            generateImageOnCanvas(canvas, params);
-            
-            // Update URL
-            const urlParams = new URLSearchParams();
-            Object.entries(params).forEach(([key, value]) => {
-                urlParams.append(key, value);
-            });
-            
-            const baseUrl = window.location.origin;
-            const imageUrl = `${baseUrl}/api/image?${urlParams.toString()}`;
-            document.getElementById('generatedUrl').textContent = imageUrl;
-        }
-
-        // Copy URL to clipboard
-        function copyUrl() {
-            const url = document.getElementById('generatedUrl').textContent;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('URL copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
+                // Add emojis
+                emojis.forEach(emoji => {
+                    const emojiDiv = document.createElement('div');
+                    emojiDiv.className = 'emoji-option';
+                    emojiDiv.textContent = emoji;
+                    emojiDiv.onclick = () => selectEmoji(emoji);
+                    if (emoji === selectedEmoji) {
+                        emojiDiv.classList.add('selected');
+                    }
+                    emojiGrid.appendChild(emojiDiv);
+                });
             });
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle color picker sync
+        function selectEmoji(emoji) {
+            selectedEmoji = emoji;
+            document.querySelectorAll('.emoji-option').forEach(el => el.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('customEmoji').value = emoji;
+        }
+
+        function setupEventListeners() {
+            // Color picker sync
             document.getElementById('bgColorPicker').addEventListener('input', (e) => {
                 document.getElementById('bgColor').value = e.target.value.replace('#', '');
             });
@@ -642,28 +484,109 @@
                 document.getElementById('textColor').value = e.target.value.replace('#', '');
             });
             
-            document.getElementById('bgColor').addEventListener('input', (e) => {
-                document.getElementById('bgColorPicker').value = '#' + e.target.value.replace('#', '');
+            document.getElementById('strokeColorPicker').addEventListener('input', (e) => {
+                document.getElementById('strokeColor').value = e.target.value.replace('#', '');
             });
             
-            document.getElementById('textColor').addEventListener('input', (e) => {
-                document.getElementById('textColorPicker').value = '#' + e.target.value.replace('#', '');
+            // Range sliders
+            document.getElementById('emojiSize').addEventListener('input', (e) => {
+                document.getElementById('emojiSizeValue').textContent = e.target.value + 'px';
             });
             
-            // Handle size presets
-            document.querySelectorAll('.size-preset').forEach(preset => {
-                preset.addEventListener('click', () => {
-                    document.querySelectorAll('.size-preset').forEach(p => p.classList.remove('active'));
-                    preset.classList.add('active');
-                    
-                    document.getElementById('width').value = preset.dataset.width;
-                    document.getElementById('height').value = preset.dataset.height;
+            document.getElementById('headerSize').addEventListener('input', (e) => {
+                document.getElementById('headerSizeValue').textContent = e.target.value + 'px';
+            });
+            
+            document.getElementById('bodySize').addEventListener('input', (e) => {
+                document.getElementById('bodySizeValue').textContent = e.target.value + 'px';
+            });
+
+            // Custom emoji input
+            document.getElementById('customEmoji').addEventListener('input', (e) => {
+                selectedEmoji = e.target.value;
+                document.querySelectorAll('.emoji-option').forEach(el => el.classList.remove('selected'));
+            });
+
+            // Position selection
+            document.querySelectorAll('.position-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.position-option').forEach(el => el.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedLayout = option.dataset.layout;
                 });
             });
+        }
+
+        function getFormValues() {
+            return {
+                emoji: selectedEmoji,
+                header: document.getElementById('headerText').value || 'Placeholder',
+                body: document.getElementById('bodyText').value || '',
+                bg: document.getElementById('bgColor').value.replace('#', ''),
+                text: document.getElementById('textColor').value.replace('#', ''),
+                stroke: document.getElementById('strokeColor').value.replace('#', ''),
+                emojiSize: document.getElementById('emojiSize').value,
+                headerSize: document.getElementById('headerSize').value,
+                bodySize: document.getElementById('bodySize').value,
+                layout: selectedLayout
+            };
+        }
+
+        function generatePreviews() {
+            const values = getFormValues();
+            const previewGrid = document.getElementById('previewGrid');
+            const baseUrl = window.location.origin + '/api/image';
             
-            // Generate initial image
-            generateImage();
-        });
+            previewGrid.innerHTML = '';
+
+            previewSizes.forEach(size => {
+                const params = new URLSearchParams({
+                    width: size.width,
+                    height: size.height,
+                    emoji: values.emoji,
+                    header: values.header,
+                    body: values.body,
+                    bg: values.bg,
+                    text: values.text,
+                    stroke: values.stroke,
+                    emojiSize: values.emojiSize,
+                    headerSize: values.headerSize,
+                    bodySize: values.bodySize,
+                    layout: values.layout
+                });
+
+                const imageUrl = `${baseUrl}?${params.toString()}`;
+                
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                    <h3>${size.name}</h3>
+                    <img src="${imageUrl}" alt="${size.name}" class="preview-image" loading="lazy">
+                    <div class="preview-url">${imageUrl}</div>
+                `;
+                
+                previewGrid.appendChild(previewItem);
+            });
+
+            // Update main URL
+            const mainParams = new URLSearchParams({
+                emoji: values.emoji,
+                header: values.header,
+                body: values.body,
+                bg: values.bg,
+                text: values.text,
+                stroke: values.stroke,
+                emojiSize: values.emojiSize,
+                headerSize: values.headerSize,
+                bodySize: values.bodySize,
+                layout: values.layout
+            });
+
+            document.getElementById('generatedUrl').innerHTML = `
+                <strong>Base URL Template:</strong><br>
+                ${baseUrl}?width=[WIDTH]&height=[HEIGHT]&${mainParams.toString()}
+            `;
+        }
     </script>
 </body>
 </html>
