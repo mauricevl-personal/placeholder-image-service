@@ -11,76 +11,38 @@ export default function handler(req, res) {
     const text = url.searchParams.get('text') || '374151';
     const stroke = url.searchParams.get('stroke') || 'dddddd';
 
-    // Font family
     const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
 
-    // Content positioning
-    const emojiY = 25;
-    const headerY = 50;
-    const bodyY = 75;
+    // Use SVG viewport units for truly responsive fonts
+    // These will scale with the SVG's displayed size
+    const emojiSize = '8vw';    // 8% of viewport width
+    const headerSize = '4vw';   // 4% of viewport width  
+    const bodySize = '2.3vw';   // 2.3% of viewport width
 
-    // Generate SVG with CSS container queries for responsive fonts
+    // Generate SVG with viewport-relative sizing
     const svg = `
-<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    <![CDATA[
-      .emoji-text { 
-        font-family: ${fontFamily}; 
-        text-anchor: middle; 
-        dominant-baseline: middle;
-        font-size: 48px; /* Default for 600px */
-      }
-      .header-text { 
-        font-family: ${fontFamily}; 
-        text-anchor: middle; 
-        dominant-baseline: middle; 
-        font-weight: bold; 
-        fill: #${text};
-        font-size: 24px; /* Default for 600px */
-      }
-      .body-text { 
-        font-family: ${fontFamily}; 
-        text-anchor: middle; 
-        dominant-baseline: middle; 
-        fill: #${text};
-        font-size: 14px; /* Default for 600px */
-      }
-      
-      /* Container-based responsive sizing */
-      @media (max-width: 400px) {
-        .emoji-text { font-size: 32px; }
-        .header-text { font-size: 16px; }
-        .body-text { font-size: 10px; }
-      }
-      
-      @media (min-width: 401px) and (max-width: 500px) {
-        .emoji-text { font-size: 38px; }
-        .header-text { font-size: 20px; }
-        .body-text { font-size: 12px; }
-      }
-    ]]>
-  </style>
-  
-  <rect width="100%" height="100%" fill="#${bg}"/>
-  <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#${stroke}" stroke-width="1"/>
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+  <rect width="100" height="100" fill="#${bg}"/>
+  <rect x="1" y="1" width="98" height="98" fill="none" stroke="#${stroke}" stroke-width="0.5"/>
   
   <!-- Emoji -->
-  <text x="50%" y="${emojiY}%" class="emoji-text">${emoji}</text>
+  <text x="50" y="25" text-anchor="middle" dominant-baseline="middle" 
+        font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
   <!-- Header -->
-  <text x="50%" y="${headerY}%" class="header-text">${header}</text>
+  <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" 
+        font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
   
   ${body.trim() ? `<!-- Body -->
-  <text x="50%" y="${bodyY}%" class="body-text">${body}</text>` : ''}
+  <text x="50" y="75" text-anchor="middle" dominant-baseline="middle" 
+        font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${body}</text>` : ''}
 </svg>`;
 
-    // Set headers and return SVG
     res.setHeader('Content-Type', 'image/svg+xml');
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.status(200).send(svg);
     
   } catch (error) {
-    // Return simple error
     res.status(500).send('Error generating image');
   }
 }
