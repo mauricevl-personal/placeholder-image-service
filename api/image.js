@@ -1,6 +1,5 @@
 export default function handler(req, res) {
   try {
-    // Parse URL parameters
     const url = new URL(req.url, `https://${req.headers.host}`);
     const width = parseInt(url.searchParams.get('width')) || 600;
     const height = parseInt(url.searchParams.get('height')) || 300;
@@ -13,29 +12,25 @@ export default function handler(req, res) {
 
     const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
 
-    // Use SVG viewport units for truly responsive fonts
-    // These will scale with the SVG's displayed size
-    const emojiSize = '8vw';    // 8% of viewport width
-    const headerSize = '4vw';   // 4% of viewport width  
-    const bodySize = '2.3vw';   // 2.3% of viewport width
-
-    // Generate SVG with viewport-relative sizing
+    // Create a responsive SVG that maintains aspect ratio
     const svg = `
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
-  <rect width="100" height="100" fill="#${bg}"/>
-  <rect x="1" y="1" width="98" height="98" fill="none" stroke="#${stroke}" stroke-width="0.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 ${width} ${height}" 
+     style="width: 100%; height: auto; max-width: 100%;"
+     preserveAspectRatio="xMidYMid meet">
   
-  <!-- Emoji -->
-  <text x="50" y="25" text-anchor="middle" dominant-baseline="middle" 
-        font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
+  <rect width="100%" height="100%" fill="#${bg}"/>
+  <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#${stroke}" stroke-width="1"/>
   
-  <!-- Header -->
-  <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" 
-        font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
+  <!-- Use font sizes that scale with the viewBox -->
+  <text x="50%" y="25%" text-anchor="middle" dominant-baseline="middle" 
+        font-size="${width * 0.08}" font-family="${fontFamily}">${emoji}</text>
   
-  ${body.trim() ? `<!-- Body -->
-  <text x="50" y="75" text-anchor="middle" dominant-baseline="middle" 
-        font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${body}</text>` : ''}
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" 
+        font-size="${width * 0.04}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
+  
+  ${body.trim() ? `<text x="50%" y="75%" text-anchor="middle" dominant-baseline="middle" 
+        font-size="${width * 0.023}" fill="#${text}" font-family="${fontFamily}">${body}</text>` : ''}
 </svg>`;
 
     res.setHeader('Content-Type', 'image/svg+xml');
