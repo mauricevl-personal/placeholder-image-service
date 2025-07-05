@@ -12,7 +12,7 @@ export default function handler(req, res) {
     const stroke = url.searchParams.get('stroke') || 'dddddd';
     const layout = url.searchParams.get('layout') || 'vertical';
     
-    // Font sizes - use custom or fallback to responsive
+    // Font sizes - use custom or calculate relative sizes
     const customEmojiSize = url.searchParams.get('emojiSize');
     const customHeaderSize = url.searchParams.get('headerSize');
     const customBodySize = url.searchParams.get('bodySize');
@@ -25,26 +25,26 @@ export default function handler(req, res) {
       headerSize = parseInt(customHeaderSize);
       bodySize = parseInt(customBodySize);
     } else {
-      // Fixed font sizes that don't change with image size
-      emojiSize = 38;
-      headerSize = 24;
-      bodySize = 14;
+      // Relative font sizes based on SVG viewport units
+      // These percentages will scale with the image size when displayed
+      emojiSize = width * 0.095;  // ~9.5% of width (38px at 400px = 9.5%)
+      headerSize = width * 0.06;  // ~6% of width (24px at 400px = 6%)
+      bodySize = width * 0.035;   // ~3.5% of width (14px at 400px = 3.5%)
+      
+      // Set reasonable min/max limits to prevent too small or too large text
+      emojiSize = Math.max(Math.min(emojiSize, 80), 20);
+      headerSize = Math.max(Math.min(headerSize, 48), 12);
+      bodySize = Math.max(Math.min(bodySize, 28), 8);
     }
 
     // Font family
     const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
 
-    // Calculate the "content area" - this is the core spacing between elements
-    // Based on your preferred 300x150 layout:
-    // - Total content height spans from 25% to 75% = 50% of image height
-    // - Emoji at 25% (top of content area)
-    // - Header at 50% (middle - 25% into content area)  
-    // - Body at 75% (bottom - 50% into content area)
-    
+    // Content area positioning (same as before)
     const contentAreaHeight = 50; // 50% of image height for content
     const contentStartY = 50 - (contentAreaHeight / 2); // Center the content area vertically
     
-    // Element positions within the content area (as percentages of content area)
+    // Element positions within the content area
     const emojiOffsetInContent = 0;    // 0% of content area (top)
     const headerOffsetInContent = 50;  // 50% of content area (middle)
     const bodyOffsetInContent = 100;   // 100% of content area (bottom)
@@ -54,12 +54,11 @@ export default function handler(req, res) {
     const headerY = contentStartY + (headerOffsetInContent * contentAreaHeight / 100);
     const bodyY = contentStartY + (bodyOffsetInContent * contentAreaHeight / 100);
 
-    // Layout positioning override if using custom layouts
+    // Layout positioning override
     let finalEmojiY, finalHeaderY, finalBodyY;
     
     switch (layout) {
       case 'compact':
-        // Tighter spacing - reduce content area height
         const compactContentHeight = 40;
         const compactStartY = 50 - (compactContentHeight / 2);
         finalEmojiY = compactStartY + (0 * compactContentHeight / 100);
@@ -67,12 +66,11 @@ export default function handler(req, res) {
         finalBodyY = compactStartY + (100 * compactContentHeight / 100);
         break;
       case 'minimal':
-        // Just icon and header, no body - smaller content area
         const minimalContentHeight = 30;
         const minimalStartY = 50 - (minimalContentHeight / 2);
         finalEmojiY = minimalStartY + (0 * minimalContentHeight / 100);
         finalHeaderY = minimalStartY + (100 * minimalContentHeight / 100);
-        finalBodyY = null; // Don't show body
+        finalBodyY = null;
         break;
       case 'vertical':
       default:
