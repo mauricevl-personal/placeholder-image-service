@@ -9,18 +9,20 @@ export default function handler(req, res) {
     const bg = url.searchParams.get('bg') || 'f3f4f6';
     const text = url.searchParams.get('text') || '374151';
 
-    // XLarge-optimized font sizes
-    const emojiSize = 72;
-    const headerSize = 36;
-    const bodySize = 18;
+    // Accept custom sizes from URL parameters, or use defaults
+    const emojiSize = parseInt(url.searchParams.get('emojiSize')) || 72;
+    const headerSize = parseInt(url.searchParams.get('headerSize')) || 36;
+    const bodySize = parseInt(url.searchParams.get('bodySize')) || 18;
+    const emojiY = parseInt(url.searchParams.get('emojiY')) || 25;
+    const bodyY = parseInt(url.searchParams.get('bodyY')) || 75;
 
     const svg = `
 <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#${bg}"/>
   <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#ddd" stroke-width="1"/>
-  <text x="50%" y="25%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="system-ui">${emoji}</text>
+  <text x="50%" y="${emojiY}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="system-ui">${emoji}</text>
   <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="system-ui">${header}</text>
-  ${body ? `<text x="50%" y="75%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="system-ui">${body}</text>` : ''}
+  ${body ? `<text x="50%" y="${bodyY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="system-ui">${body}</text>` : ''}
 </svg>`;
 
     res.setHeader('Content-Type', 'image/svg+xml');
