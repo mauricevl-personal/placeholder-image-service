@@ -39,15 +39,15 @@ export default function handler(req, res) {
     // Clean system font family
     const fontFamily = 'system-ui, -apple-system, Arial, sans-serif';
 
-    // Header is always at 50%
-    const headerY = 50;
-
     // Determine text handling based on size
     const isSmall = width <= 200;
     const isMedium = width > 200 && width < 600;
     const isLargeOrXLarge = width >= 600;
 
-    // Function to wrap header text for small size (10 chars per line)
+    // Header Y position - different for small vs others
+    const headerY = isSmall ? 43 : 50;
+
+    // Function to wrap header text for small size (15 chars per line)
     function wrapHeaderText(text) {
       if (!text || text.trim() === '') return [];
       
@@ -58,15 +58,15 @@ export default function handler(req, res) {
       for (const word of words) {
         const testLine = currentLine + (currentLine ? ' ' : '') + word;
         
-        if (testLine.length <= 10) {
+        if (testLine.length <= 15) { // Changed from 10 to 15
           currentLine = testLine;
         } else {
           if (currentLine) {
             lines.push(currentLine);
             currentLine = word;
           } else {
-            // Word is longer than 10 chars, truncate it
-            lines.push(word.substring(0, 10));
+            // Word is longer than 15 chars, truncate it
+            lines.push(word.substring(0, 15));
             currentLine = '';
           }
         }
@@ -124,8 +124,7 @@ export default function handler(req, res) {
     let bodyTextElements = '';
 
     if (isSmall) {
-      // Small: Wrap header in 2 lines, no body
-      // Align top of first line to center (50%)
+      // Small: Wrap header in 2 lines (15 chars each), no body, header starts at 43%
       const headerLines = wrapHeaderText(header);
       headerTextElements = headerLines.map((line, index) => {
         const lineY = headerY + (index * (headerLineHeight / height * 100));
