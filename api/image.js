@@ -42,17 +42,14 @@ export default function handler(req, res) {
     // Header is always at 50%
     const headerY = 50;
 
-    // Only wrap text for medium (300px) and small (200px) - not for large (600px)
-    const shouldWrapText = width < 600;
+    // Determine text handling based on size
+    const isSmall = width <= 200;
+    const isMedium = width > 200 && width < 600;
+    const isLargeOrXLarge = width >= 600;
 
-    // Function to wrap body text at 35 characters per line, max 2 lines
-    function wrapBodyText(text) {
+    // Function to wrap header text for small size (10 chars per line)
+    function wrapHeaderText(text) {
       if (!text || text.trim() === '') return [];
-      
-      // For xlarge and large, return single line (no wrapping)
-      if (!shouldWrapText) {
-        return [text.trim()];
-      }
       
       const words = text.trim().split(' ');
       const lines = [];
@@ -61,15 +58,15 @@ export default function handler(req, res) {
       for (const word of words) {
         const testLine = currentLine + (currentLine ? ' ' : '') + word;
         
-        if (testLine.length <= 35) {
+        if (testLine.length <= 10) {
           currentLine = testLine;
         } else {
           if (currentLine) {
             lines.push(currentLine);
             currentLine = word;
           } else {
-            // Word is longer than 35 chars, truncate it
-            lines.push(word.substring(0, 35));
+            // Word is longer than 10 chars, truncate it
+            lines.push(word.substring(0, 10));
             currentLine = '';
           }
         }
@@ -85,20 +82,72 @@ export default function handler(req, res) {
       return lines;
     }
 
-    // Wrap the body text
-    const bodyLines = wrapBodyText(body);
+    // Function to wrap body text for medium size (35 chars per line)
+    function wrapBodyText(text) {
+      if (!text || text.trim() === '') return [];
+      
+      const words = text.trim().split(' ');
+      const lines = [];
+      let currentLine = '';
+      
+      for (const word of words) {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        
+        if (testLine.length <= 35) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            lines.push(word.substring(0, 35));
+            currentLine = '';
+          }
+        }
+        
+        if (lines.length >= 2) break;
+      }
+      
+      if (currentLine && lines.length < 2) {
+        lines.push(currentLine);
+      }
+      
+      return lines;
+    }
 
     // Calculate line height as 1.1em relative to font size
-    const lineHeight = bodySize * 1.1;
+    const headerLineHeight = headerSize * 1.1;
+    const bodyLineHeight = bodySize * 1.1;
 
-    // Generate body text elements
+    // Generate text elements based on size
+    let headerTextElements = '';
     let bodyTextElements = '';
-    if (bodyLines.length > 0) {
-      bodyTextElements = bodyLines.map((line, index) => {
-        // Use relative line height (1.1em)
-        const lineY = bodyY + (index * (lineHeight / height * 100)); // Convert to percentage
-        return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
+
+    if (isSmall) {
+      // Small: Wrap header in 2 lines, no body
+      const headerLines = wrapHeaderText(header);
+      headerTextElements = headerLines.map((line, index) => {
+        const lineY = headerY + (index * (headerLineHeight / height * 100)) - ((headerLines.length - 1) * (headerLineHeight / height * 100) / 2);
+        return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
       }).join('\n  ');
+    } else if (isMedium) {
+      // Medium: Single line header, wrapped body
+      headerTextElements = `<text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header.substring(0, 20)}</text>`;
+      
+      const bodyLines = wrapBodyText(body);
+      if (bodyLines.length > 0) {
+        bodyTextElements = bodyLines.map((line, index) => {
+          const lineY = bodyY + (index * (bodyLineHeight / height * 100));
+          return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
+        }).join('\n  ');
+      }
+    } else {
+      // Large/XLarge: Single line header, single line body
+      headerTextElements = `<text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header.substring(0, 20)}</text>`;
+      
+      if (body.trim()) {
+        bodyTextElements = `<text x="50%" y="${bodyY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${body.trim()}</text>`;
+      }
     }
 
     // Generate SVG
@@ -108,7 +157,7 @@ export default function handler(req, res) {
   
   <text x="50%" y="${emojiY}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
-  <text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header.substring(0, 20)}</text>
+  ${headerTextElements}
   
   ${bodyTextElements}
 </svg>`;
