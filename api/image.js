@@ -45,7 +45,7 @@ export default function handler(req, res) {
     const isLargeOrXLarge = width >= 600;
 
     // Header Y position - different for small vs others
-    const headerY = isSmall ? 43 : 50;
+    const headerY = isSmall ? 45 : 50;
 
     // Function to wrap header text for small size (15 chars per line)
     function wrapHeaderText(text) {
