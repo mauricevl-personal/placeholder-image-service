@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -53,15 +53,15 @@
             margin-bottom: 2rem;
         }
 
-        .grid {
+        .main-grid {
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 450px 1fr;
             gap: 2rem;
             margin-bottom: 3rem;
         }
 
-        @media (max-width: 1024px) {
-            .grid {
+        @media (max-width: 1200px) {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -156,6 +156,35 @@
             background: #dbeafe;
         }
 
+        .type-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .type-tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .type-tab:hover {
+            background: #e2e8f0;
+        }
+
+        .type-tab.active {
+            background: #3b82f6;
+            color: white;
+        }
+
         .range-group {
             display: grid;
             grid-template-columns: 1fr auto;
@@ -196,8 +225,8 @@
 
         .preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: 1fr;
+            gap: 2rem;
             margin-bottom: 2rem;
         }
 
@@ -216,12 +245,16 @@
         }
 
         .preview-image {
-            width: 100%;
-            height: auto;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             margin-bottom: 1rem;
         }
+
+        /* Specific preview widths */
+        .preview-xlarge .preview-image { width: 900px; max-width: 100%; height: auto; }
+        .preview-large .preview-image { width: 540px; max-width: 100%; height: auto; }
+        .preview-medium .preview-image { width: 240px; max-width: 100%; height: auto; }
+        .preview-small .preview-image { width: 140px; max-width: 100%; height: auto; }
 
         .preview-url {
             background: #f1f5f9;
@@ -246,30 +279,12 @@
             color: #1e293b;
         }
 
-        .position-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
+        .type-settings {
+            display: none;
         }
 
-        .position-option {
-            padding: 0.5rem;
-            text-align: center;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.8rem;
-        }
-
-        .position-option:hover {
-            border-color: #3b82f6;
-            background: #f1f5f9;
-        }
-
-        .position-option.selected {
-            border-color: #3b82f6;
-            background: #dbeafe;
+        .type-settings.active {
+            display: block;
         }
     </style>
 </head>
@@ -283,7 +298,7 @@
             </div>
         </div>
 
-        <div class="grid">
+        <div class="main-grid">
             <div class="card">
                 <h2>Design Your Placeholder</h2>
                 <form id="placeholderForm">
@@ -327,59 +342,190 @@
                         </div>
                     </div>
 
-                    <!-- Stroke Color -->
+                    <!-- Type Selection -->
                     <div class="form-group">
-                        <label for="strokeColor">Border Color</label>
-                        <div class="color-input">
-                            <input type="color" id="strokeColorPicker" value="#dddddd">
-                            <input type="text" id="strokeColor" value="dddddd" maxlength="7">
+                        <label>Placeholder Type</label>
+                        <div class="type-tabs" id="typeTabs">
+                            <div class="type-tab active" data-type="xlarge">XLarge<br>1200×400</div>
+                            <div class="type-tab" data-type="large">Large<br>600×300</div>
+                            <div class="type-tab" data-type="medium">Medium<br>300×150</div>
+                            <div class="type-tab" data-type="small">Small<br>200×100</div>
                         </div>
                     </div>
 
-                    <!-- Font Sizes -->
-                    <div class="form-group">
-                        <label>Emoji Size</label>
-                        <div class="range-group">
-                            <input type="range" id="emojiSize" min="16" max="80" value="40">
-                            <span class="range-value" id="emojiSizeValue">40px</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Header Font Size</label>
-                        <div class="range-group">
-                            <input type="range" id="headerSize" min="8" max="40" value="20">
-                            <span class="range-value" id="headerSizeValue">20px</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Body Font Size</label>
-                        <div class="range-group">
-                            <input type="range" id="bodySize" min="6" max="24" value="14">
-                            <span class="range-value" id="bodySizeValue">14px</span>
-                        </div>
-                    </div>
-
-                    <!-- Element Positions -->
-                    <div class="form-group">
-                        <label>Layout Position</label>
-                        <div class="position-grid" id="positionGrid">
-                            <div class="position-option selected" data-layout="vertical">
-                                <div>📍</div>
-                                <div>📝</div>
-                                <div>📄</div>
-                                <div>Vertical</div>
+                    <!-- Per-Type Settings -->
+                    <div id="xlarge-settings" class="type-settings active">
+                        <h3 style="margin-bottom: 1rem; color: #1e293b;">XLarge Settings (1200×400)</h3>
+                        
+                        <div class="form-group">
+                            <label>Emoji Size</label>
+                            <div class="range-group">
+                                <input type="range" id="xlarge-emojiSize" min="40" max="120" value="72">
+                                <span class="range-value" id="xlarge-emojiSizeValue">72px</span>
                             </div>
-                            <div class="position-option" data-layout="compact">
-                                <div>📍📝</div>
-                                <div>📄</div>
-                                <div>Compact</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Header Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="xlarge-headerSize" min="20" max="60" value="36">
+                                <span class="range-value" id="xlarge-headerSizeValue">36px</span>
                             </div>
-                            <div class="position-option" data-layout="minimal">
-                                <div>📍</div>
-                                <div>📝</div>
-                                <div>Minimal</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="xlarge-bodySize" min="12" max="32" value="18">
+                                <span class="range-value" id="xlarge-bodySizeValue">18px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Emoji Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="xlarge-emojiY" min="15" max="40" value="25">
+                                <span class="range-value" id="xlarge-emojiYValue">25%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="xlarge-bodyY" min="60" max="85" value="75">
+                                <span class="range-value" id="xlarge-bodyYValue">75%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="large-settings" class="type-settings">
+                        <h3 style="margin-bottom: 1rem; color: #1e293b;">Large Settings (600×300)</h3>
+                        
+                        <div class="form-group">
+                            <label>Emoji Size</label>
+                            <div class="range-group">
+                                <input type="range" id="large-emojiSize" min="24" max="80" value="48">
+                                <span class="range-value" id="large-emojiSizeValue">48px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Header Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="large-headerSize" min="12" max="40" value="24">
+                                <span class="range-value" id="large-headerSizeValue">24px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="large-bodySize" min="8" max="24" value="14">
+                                <span class="range-value" id="large-bodySizeValue">14px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Emoji Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="large-emojiY" min="15" max="40" value="25">
+                                <span class="range-value" id="large-emojiYValue">25%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="large-bodyY" min="60" max="85" value="75">
+                                <span class="range-value" id="large-bodyYValue">75%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="medium-settings" class="type-settings">
+                        <h3 style="margin-bottom: 1rem; color: #1e293b;">Medium Settings (300×150)</h3>
+                        
+                        <div class="form-group">
+                            <label>Emoji Size</label>
+                            <div class="range-group">
+                                <input type="range" id="medium-emojiSize" min="16" max="50" value="32">
+                                <span class="range-value" id="medium-emojiSizeValue">32px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Header Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="medium-headerSize" min="10" max="28" value="18">
+                                <span class="range-value" id="medium-headerSizeValue">18px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="medium-bodySize" min="6" max="18" value="12">
+                                <span class="range-value" id="medium-bodySizeValue">12px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Emoji Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="medium-emojiY" min="15" max="40" value="25">
+                                <span class="range-value" id="medium-emojiYValue">25%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="medium-bodyY" min="60" max="85" value="75">
+                                <span class="range-value" id="medium-bodyYValue">75%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="small-settings" class="type-settings">
+                        <h3 style="margin-bottom: 1rem; color: #1e293b;">Small Settings (200×100)</h3>
+                        
+                        <div class="form-group">
+                            <label>Emoji Size</label>
+                            <div class="range-group">
+                                <input type="range" id="small-emojiSize" min="12" max="32" value="20">
+                                <span class="range-value" id="small-emojiSizeValue">20px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Header Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="small-headerSize" min="8" max="20" value="12">
+                                <span class="range-value" id="small-headerSizeValue">12px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Font Size</label>
+                            <div class="range-group">
+                                <input type="range" id="small-bodySize" min="6" max="14" value="10">
+                                <span class="range-value" id="small-bodySizeValue">10px</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Emoji Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="small-emojiY" min="20" max="45" value="30">
+                                <span class="range-value" id="small-emojiYValue">30%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Body Y Position</label>
+                            <div class="range-group">
+                                <input type="range" id="small-bodyY" min="70" max="90" value="80">
+                                <span class="range-value" id="small-bodyYValue">80%</span>
                             </div>
                         </div>
                     </div>
@@ -395,7 +541,7 @@
                         <!-- Preview items will be generated here -->
                     </div>
                     <div class="generated-url" id="generatedUrl">
-                        Base URL will appear here after generation
+                        URLs will appear here after generation
                     </div>
                 </div>
             </div>
@@ -412,21 +558,21 @@
             'General': ['🔍', '➕', '📌', '💼', '🏢']
         };
 
-        // Preview sizes
-        const previewSizes = [
-            { width: 600, height: 300, name: 'Desktop Full (600×300)' },
-            { width: 300, height: 150, name: 'Mobile/Half (300×150)' },
-            { width: 200, height: 100, name: 'Narrow Column (200×100)' },
-            { width: 1200, height: 450, name: 'Hero Banner (1200×450)' }
-        ];
+        // Type configurations
+        const typeConfigs = {
+            xlarge: { width: 1200, height: 400, endpoint: 'xlarge', displayWidth: 900 },
+            large: { width: 600, height: 300, endpoint: 'large', displayWidth: 540 },
+            medium: { width: 300, height: 150, endpoint: 'medium', displayWidth: 240 },
+            small: { width: 200, height: 100, endpoint: 'small', displayWidth: 140 }
+        };
 
         let selectedEmoji = '⭐';
-        let selectedLayout = 'vertical';
+        let currentType = 'xlarge';
 
         // Initialize the form
         document.addEventListener('DOMContentLoaded', function() {
             // Set current URL
-            document.getElementById('currentUrl').textContent = window.location.origin + '/api/image';
+            document.getElementById('currentUrl').textContent = window.location.origin + '/api/[type]';
 
             // Generate emoji grid
             generateEmojiGrid();
@@ -484,36 +630,37 @@
                 document.getElementById('textColor').value = e.target.value.replace('#', '');
             });
             
-            document.getElementById('strokeColorPicker').addEventListener('input', (e) => {
-                document.getElementById('strokeColor').value = e.target.value.replace('#', '');
+            // Type tabs
+            document.querySelectorAll('.type-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.type-settings').forEach(s => s.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    currentType = tab.dataset.type;
+                    document.getElementById(`${currentType}-settings`).classList.add('active');
+                });
             });
-            
-            // Range sliders
-            document.getElementById('emojiSize').addEventListener('input', (e) => {
-                document.getElementById('emojiSizeValue').textContent = e.target.value + 'px';
-            });
-            
-            document.getElementById('headerSize').addEventListener('input', (e) => {
-                document.getElementById('headerSizeValue').textContent = e.target.value + 'px';
-            });
-            
-            document.getElementById('bodySize').addEventListener('input', (e) => {
-                document.getElementById('bodySizeValue').textContent = e.target.value + 'px';
+
+            // Range sliders for all types
+            Object.keys(typeConfigs).forEach(type => {
+                ['emojiSize', 'headerSize', 'bodySize', 'emojiY', 'bodyY'].forEach(setting => {
+                    const slider = document.getElementById(`${type}-${setting}`);
+                    const value = document.getElementById(`${type}-${setting}Value`);
+                    
+                    if (slider && value) {
+                        slider.addEventListener('input', (e) => {
+                            const unit = setting.includes('Y') ? '%' : 'px';
+                            value.textContent = e.target.value + unit;
+                        });
+                    }
+                });
             });
 
             // Custom emoji input
             document.getElementById('customEmoji').addEventListener('input', (e) => {
                 selectedEmoji = e.target.value;
                 document.querySelectorAll('.emoji-option').forEach(el => el.classList.remove('selected'));
-            });
-
-            // Position selection
-            document.querySelectorAll('.position-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    document.querySelectorAll('.position-option').forEach(el => el.classList.remove('selected'));
-                    option.classList.add('selected');
-                    selectedLayout = option.dataset.layout;
-                });
             });
         }
 
@@ -523,68 +670,63 @@
                 header: document.getElementById('headerText').value || 'Placeholder',
                 body: document.getElementById('bodyText').value || '',
                 bg: document.getElementById('bgColor').value.replace('#', ''),
-                text: document.getElementById('textColor').value.replace('#', ''),
-                stroke: document.getElementById('strokeColor').value.replace('#', ''),
-                emojiSize: document.getElementById('emojiSize').value,
-                headerSize: document.getElementById('headerSize').value,
-                bodySize: document.getElementById('bodySize').value,
-                layout: selectedLayout
+                text: document.getElementById('textColor').value.replace('#', '')
+            };
+        }
+
+        function getTypeSettings(type) {
+            return {
+                emojiSize: document.getElementById(`${type}-emojiSize`).value,
+                headerSize: document.getElementById(`${type}-headerSize`).value,
+                bodySize: document.getElementById(`${type}-bodySize`).value,
+                emojiY: document.getElementById(`${type}-emojiY`).value,
+                bodyY: document.getElementById(`${type}-bodyY`).value
             };
         }
 
         function generatePreviews() {
             const values = getFormValues();
             const previewGrid = document.getElementById('previewGrid');
-            const baseUrl = window.location.origin + '/api/image';
+            const baseUrl = window.location.origin + '/api';
             
             previewGrid.innerHTML = '';
 
-            previewSizes.forEach(size => {
+            Object.entries(typeConfigs).forEach(([type, config]) => {
+                const typeSettings = getTypeSettings(type);
+                
                 const params = new URLSearchParams({
-                    width: size.width,
-                    height: size.height,
                     emoji: values.emoji,
                     header: values.header,
                     body: values.body,
                     bg: values.bg,
                     text: values.text,
-                    stroke: values.stroke,
-                    emojiSize: values.emojiSize,
-                    headerSize: values.headerSize,
-                    bodySize: values.bodySize,
-                    layout: values.layout
+                    emojiSize: typeSettings.emojiSize,
+                    headerSize: typeSettings.headerSize,
+                    bodySize: typeSettings.bodySize,
+                    emojiY: typeSettings.emojiY,
+                    bodyY: typeSettings.bodyY
                 });
 
-                const imageUrl = `${baseUrl}?${params.toString()}`;
+                const imageUrl = `${baseUrl}/${config.endpoint}?${params.toString()}`;
                 
                 const previewItem = document.createElement('div');
-                previewItem.className = 'preview-item';
+                previewItem.className = `preview-item preview-${type}`;
                 previewItem.innerHTML = `
-                    <h3>${size.name}</h3>
-                    <img src="${imageUrl}" alt="${size.name}" class="preview-image" loading="lazy">
+                    <h3>${type.toUpperCase()} - ${config.width}×${config.height} (Preview: ${config.displayWidth}px)</h3>
+                    <img src="${imageUrl}" alt="${type}" class="preview-image" loading="lazy">
                     <div class="preview-url">${imageUrl}</div>
                 `;
                 
                 previewGrid.appendChild(previewItem);
             });
 
-            // Update main URL
-            const mainParams = new URLSearchParams({
-                emoji: values.emoji,
-                header: values.header,
-                body: values.body,
-                bg: values.bg,
-                text: values.text,
-                stroke: values.stroke,
-                emojiSize: values.emojiSize,
-                headerSize: values.headerSize,
-                bodySize: values.bodySize,
-                layout: values.layout
-            });
-
+            // Update URLs summary
             document.getElementById('generatedUrl').innerHTML = `
-                <strong>Base URL Template:</strong><br>
-                ${baseUrl}?width=[WIDTH]&height=[HEIGHT]&${mainParams.toString()}
+                <strong>Generated URLs:</strong><br>
+                XLarge: ${baseUrl}/xlarge?...<br>
+                Large: ${baseUrl}/large?...<br>
+                Medium: ${baseUrl}/medium?...<br>
+                Small: ${baseUrl}/small?...
             `;
         }
     </script>
