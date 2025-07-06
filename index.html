@@ -94,11 +94,6 @@
             outline: none;
         }
 
-        .form-input.error {
-            border-color: #ff4d4f;
-            box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
-        }
-
         .form-textarea {
             width: 100%;
             padding: 4px 11px;
@@ -117,11 +112,6 @@
             border-color: #00A66F;
             box-shadow: 0 0 0 2px rgba(0, 166, 111, 0.2);
             outline: none;
-        }
-
-        .form-textarea.error {
-            border-color: #ff4d4f;
-            box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
         }
 
         .form-select {
@@ -207,12 +197,6 @@
 
         .char-count.error {
             color: #ff4d4f;
-        }
-
-        .error-message {
-            color: #ff4d4f;
-            font-size: 12px;
-            margin-top: 4px;
         }
 
         .update-btn {
@@ -346,7 +330,6 @@
                     value=""
                 >
                 <div class="char-count" id="headerCount">0/20</div>
-                <div class="error-message" id="headerError" style="display: none;"></div>
             </div>
 
             <!-- Icon Select -->
@@ -355,7 +338,7 @@
                     <span class="required">*</span> Icon
                 </label>
                 <div class="form-select" id="iconSelect">
-                    <input type="text" class="select-input" id="iconInput" readonly placeholder="Select" value="⭐ Rating">
+                    <input type="text" class="select-input" id="iconInput" readonly placeholder="Select" value="">
                     <span class="select-arrow">▼</span>
                     <div class="select-dropdown" id="iconDropdown">
                         <div class="select-option" data-value="✍️" data-label="Text">
@@ -409,7 +392,6 @@
                     rows="2"
                 ></textarea>
                 <div class="char-count" id="bodyCount">0/70</div>
-                <div class="error-message" id="bodyError" style="display: none;"></div>
             </div>
 
             <!-- Size Select -->
@@ -491,7 +473,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
             updateCharCounts();
-            validateForm();
+            updateButtonState();
             
             // Ensure no text field is focused/selected on load
             document.activeElement?.blur();
@@ -502,16 +484,14 @@
             const headerInput = document.getElementById('headerInput');
             headerInput.addEventListener('input', function() {
                 updateCharCount('header');
-                validateField('header');
-                validateForm();
+                updateButtonState();
             });
 
             // Body input
             const bodyInput = document.getElementById('bodyInput');
             bodyInput.addEventListener('input', function() {
                 updateCharCount('body');
-                validateField('body');
-                validateForm();
+                updateButtonState();
             });
 
             // Template select
@@ -585,36 +565,14 @@
             updateCharCount('body');
         }
 
-        function validateField(field) {
-            const input = document.getElementById(field + 'Input');
-            const error = document.getElementById(field + 'Error');
-            const max = field === 'header' ? 20 : 70;
-            
-            if (field === 'header' && input.value.trim() === '') {
-                input.classList.add('error');
-                error.textContent = 'Header is required';
-                error.style.display = 'block';
-                return false;
-            } else if (input.value.length > max) {
-                input.classList.add('error');
-                error.textContent = `Maximum ${max} characters allowed`;
-                error.style.display = 'block';
-                return false;
-            } else {
-                input.classList.remove('error');
-                error.style.display = 'none';
-                return true;
-            }
-        }
-
-        function validateForm() {
-            const headerValid = validateField('header');
-            const bodyValid = validateField('body');
+        function updateButtonState() {
+            const headerInput = document.getElementById('headerInput');
+            const hasHeader = headerInput.value.trim() !== '';
             const hasIcon = selectedIcon.value !== '';
             const hasSize = selectedSize.value !== '';
             
             const updateBtn = document.getElementById('updateBtn');
-            updateBtn.disabled = !(headerValid && bodyValid && hasIcon && hasSize);
+            updateBtn.disabled = !(hasHeader && hasIcon && hasSize);
         }
 
         function toggleDropdown(type) {
@@ -682,8 +640,8 @@
                 // Update character counts
                 updateCharCounts();
                 
-                // Validate form
-                validateForm();
+                // Update button state
+                updateButtonState();
             }
             
             closeAllDropdowns();
@@ -719,7 +677,7 @@
             }
             
             closeAllDropdowns();
-            validateForm();
+            updateButtonState();
         }
 
         function updatePlaceholder() {
