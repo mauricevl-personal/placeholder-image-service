@@ -36,7 +36,7 @@ export default function handler(req, res) {
       bodyY = 75;
     }
 
-    // Font family
+    // Updated font family with Noto Sans priority
     const fontFamily = '"Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"';
 
     // Header is always at 50%
