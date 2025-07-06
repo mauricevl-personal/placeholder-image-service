@@ -1,43 +1,70 @@
 export default function handler(req, res) {
   try {
+    // Parse URL parameters
     const url = new URL(req.url, `https://${req.headers.host}`);
-    const width = parseInt(url.searchParams.get('width')) || 600;
-    const height = parseInt(url.searchParams.get('height')) || 300;
+    const width = parseInt(url.searchParams.get('width')) || 400;
+    const height = parseInt(url.searchParams.get('height')) || 200;
     const header = url.searchParams.get('header') || 'Add CSAT Block';
     const body = url.searchParams.get('body') || '';
     const emoji = url.searchParams.get('emoji') || '⭐';
     const bg = url.searchParams.get('bg') || 'f3f4f6';
     const text = url.searchParams.get('text') || '374151';
     const stroke = url.searchParams.get('stroke') || 'dddddd';
+    
+    // Get custom font sizes and positions from URL parameters
+    const customEmojiSize = url.searchParams.get('emojiSize');
+    const customHeaderSize = url.searchParams.get('headerSize');
+    const customBodySize = url.searchParams.get('bodySize');
+    const customEmojiY = url.searchParams.get('emojiY');
+    const customBodyY = url.searchParams.get('bodyY');
+    
+    let emojiSize, headerSize, bodySize, emojiY, bodyY;
+    
+    if (customEmojiSize && customHeaderSize && customBodySize) {
+      // Use custom sizes from UI sliders
+      emojiSize = parseInt(customEmojiSize);
+      headerSize = parseInt(customHeaderSize);
+      bodySize = parseInt(customBodySize);
+      emojiY = parseInt(customEmojiY) || 25;
+      bodyY = parseInt(customBodyY) || 75;
+    } else {
+      // Use responsive sizing (fallback for non-UI usage)
+      emojiSize = Math.max(Math.min(width * 0.08, 48), 24);
+      headerSize = Math.max(Math.min(width * 0.04, 24), 16);
+      bodySize = Math.max(Math.min(width * 0.024, 16), 12);
+      emojiY = 25;
+      bodyY = 75;
+    }
 
-    const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
+    // Font family
+    const fontFamily = '"Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"';
 
-    // Create a responsive SVG that maintains aspect ratio
+    // Header is always at 50%
+    const headerY = 50;
+
+    // Generate SVG
     const svg = `
-<svg xmlns="http://www.w3.org/2000/svg" 
-     viewBox="0 0 ${width} ${height}" 
-     style="width: 100%; height: auto; max-width: 100%;"
-     preserveAspectRatio="xMidYMid meet">
-  
+<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#${bg}"/>
   <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#${stroke}" stroke-width="1"/>
   
-  <!-- Use font sizes that scale with the viewBox -->
-  <text x="50%" y="25%" text-anchor="middle" dominant-baseline="middle" 
-        font-size="${width * 0.08}" font-family="${fontFamily}">${emoji}</text>
+  <!-- Emoji -->
+  <text x="50%" y="${emojiY}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" 
-        font-size="${width * 0.04}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
+  <!-- Header (always at 50%) -->
+  <text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
   
-  ${body.trim() ? `<text x="50%" y="75%" text-anchor="middle" dominant-baseline="middle" 
-        font-size="${width * 0.023}" fill="#${text}" font-family="${fontFamily}">${body}</text>` : ''}
+  ${body.trim() ? `<!-- Body -->
+  <text x="50%" y="${bodyY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${body}</text>` : ''}
 </svg>`;
 
+    // Set headers and return SVG
     res.setHeader('Content-Type', 'image/svg+xml');
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.status(200).send(svg);
     
   } catch (error) {
+    // Return simple error
     res.status(500).send('Error generating image');
   }
 }
