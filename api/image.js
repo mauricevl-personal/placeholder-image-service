@@ -125,10 +125,11 @@ export default function handler(req, res) {
 
     if (isSmall) {
       // Small: Wrap header in 2 lines, no body
+      // Align top of first line to center (50%)
       const headerLines = wrapHeaderText(header);
       headerTextElements = headerLines.map((line, index) => {
-        const lineY = headerY + (index * (headerLineHeight / height * 100)) - ((headerLines.length - 1) * (headerLineHeight / height * 100) / 2);
-        return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
+        const lineY = headerY + (index * (headerLineHeight / height * 100));
+        return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="text-before-edge" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
       }).join('\n  ');
     } else if (isMedium) {
       // Medium: Single line header, wrapped body
