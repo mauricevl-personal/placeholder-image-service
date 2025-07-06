@@ -309,6 +309,29 @@
         </div>
 
         <form id="placeholderForm">
+            <!-- Template Select -->
+            <div class="form-group">
+                <label class="form-label">Template (optional)</label>
+                <div class="form-select" id="templateSelect">
+                    <input type="text" class="select-input" id="templateInput" readonly placeholder="Choose template or fill manually" value="">
+                    <span class="select-arrow">▼</span>
+                    <div class="select-dropdown" id="templateDropdown">
+                        <div class="select-option" data-value="csat" data-label="CSAT">
+                            <span class="emoji-icon">⭐</span> CSAT
+                        </div>
+                        <div class="select-option" data-value="footer" data-label="Footer">
+                            <span class="emoji-icon">📬</span> Footer
+                        </div>
+                        <div class="select-option" data-value="safety" data-label="Safety Information">
+                            <span class="emoji-icon">🛡️</span> Safety Information
+                        </div>
+                        <div class="select-option" data-value="hero" data-label="Hero Image">
+                            <span class="emoji-icon">📷</span> Hero Image
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Header Field -->
             <div class="form-group">
                 <label class="form-label">
@@ -434,6 +457,35 @@
         // State
         let selectedIcon = { value: '', label: '' };
         let selectedSize = { value: 'large', label: 'Full width (1/1)' };
+        let selectedTemplate = { value: '', label: '' };
+
+        // Template data
+        const templates = {
+            csat: {
+                emoji: { value: '⭐', label: 'Rating' },
+                header: 'Rating Section',
+                body: 'Insert predesigned feedback block.',
+                size: { value: 'large', label: 'Full width (1/1)' }
+            },
+            footer: {
+                emoji: { value: '📬', label: 'Footer' },
+                header: 'Footer Section',
+                body: 'Insert predesigned local footer block.',
+                size: { value: 'large', label: 'Full width (1/1)' }
+            },
+            safety: {
+                emoji: { value: '🛡️', label: 'Safety' },
+                header: 'ISI Section',
+                body: 'Insert the correct level of ISI information.',
+                size: { value: 'large', label: 'Full width (1/1)' }
+            },
+            hero: {
+                emoji: { value: '📷', label: 'Image' },
+                header: 'Hero Image',
+                body: 'Insert full width image from visual library.',
+                size: { value: 'large', label: 'Full width (1/1)' }
+            }
+        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -460,6 +512,22 @@
                 updateCharCount('body');
                 validateField('body');
                 validateForm();
+            });
+
+            // Template select
+            const templateSelect = document.getElementById('templateSelect');
+            const templateInput = document.getElementById('templateInput');
+            const templateDropdown = document.getElementById('templateDropdown');
+
+            templateInput.addEventListener('click', function() {
+                toggleDropdown('template');
+            });
+
+            templateDropdown.addEventListener('click', function(e) {
+                const option = e.target.closest('.select-option');
+                if (option) {
+                    selectTemplate(option);
+                }
             });
 
             // Icon select
@@ -562,6 +630,63 @@
                 dropdown.classList.add('open');
                 arrow.style.transform = 'translateY(-50%) rotate(180deg)';
             }
+        }
+
+        function selectTemplate(option) {
+            const value = option.dataset.value;
+            const label = option.dataset.label;
+            const input = document.getElementById('templateInput');
+            
+            // Update selected state
+            option.parentElement.querySelectorAll('.select-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            option.classList.add('selected');
+            
+            // Update input value
+            input.value = label;
+            selectedTemplate = { value, label };
+            
+            // Apply template data
+            if (templates[value]) {
+                const template = templates[value];
+                
+                // Fill header
+                document.getElementById('headerInput').value = template.header;
+                
+                // Fill body
+                document.getElementById('bodyInput').value = template.body;
+                
+                // Set icon
+                selectedIcon = template.emoji;
+                document.getElementById('iconInput').value = `${template.emoji.value} ${template.emoji.label}`;
+                // Update icon dropdown selection
+                document.querySelectorAll('#iconDropdown .select-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.value === template.emoji.value) {
+                        opt.classList.add('selected');
+                    }
+                });
+                
+                // Set size
+                selectedSize = template.size;
+                document.getElementById('sizeInput').value = template.size.label;
+                // Update size dropdown selection
+                document.querySelectorAll('#sizeDropdown .select-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.value === template.size.value) {
+                        opt.classList.add('selected');
+                    }
+                });
+                
+                // Update character counts
+                updateCharCounts();
+                
+                // Validate form
+                validateForm();
+            }
+            
+            closeAllDropdowns();
         }
 
         function closeAllDropdowns() {
