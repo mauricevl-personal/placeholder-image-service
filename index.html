@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Placeholder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #F6FCF9;
+            color: #323232;
+            line-height: 1.5715;
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            width: 480px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #323232;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #8c8c8c;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .close-btn:hover {
+            color: #323232;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #323232;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .required {
+            color: #ff4d4f;
+            margin-right: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 4px 11px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5715;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #00A66F;
+            box-shadow: 0 0 0 2px rgba(0, 166, 111, 0.2);
+            outline: none;
+        }
+
+        .form-input.error {
+            border-color: #ff4d4f;
+            box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 4px 11px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5715;
+            resize: vertical;
+            min-height: 46px;
+            max-height: 46px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            border-color: #00A66F;
+            box-shadow: 0 0 0 2px rgba(0, 166, 111, 0.2);
+            outline: none;
+        }
+
+        .form-textarea.error {
+            border-color: #ff4d4f;
+            box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+        }
+
+        .form-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 4px 30px 4px 11px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5715;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .select-input:focus {
+            border-color: #00A66F;
+            box-shadow: 0 0 0 2px rgba(0, 166, 111, 0.2);
+            outline: none;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8c8c8c;
+            pointer-events: none;
+            transition: transform 0.2s;
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .select-dropdown.open {
+            display: block;
+        }
+
+        .select-option {
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .select-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .select-option.selected {
+            background-color: #e6f7ff;
+            color: #00A66F;
+        }
+
+        .emoji-icon {
+            font-size: 16px;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #8c8c8c;
+            margin-top: 4px;
+        }
+
+        .char-count.error {
+            color: #ff4d4f;
+        }
+
+        .error-message {
+            color: #ff4d4f;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .update-btn {
+            width: auto;
+            padding: 6px 12px;
+            background: #00A66F;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 32px;
+            text-align: left;
+        }
+
+        .update-btn:hover {
+            background: #009659;
+        }
+
+        .update-btn:active {
+            background: #008549;
+        }
+
+        .update-btn:disabled {
+            background: #f5f5f5;
+            color: #bfbfbf;
+            cursor: not-allowed;
+        }
+
+        .result-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .result-section h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #323232;
+            margin-bottom: 16px;
+        }
+
+        .url-display {
+            background: #fafafa;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin-bottom: 16px;
+            color: #323232;
+        }
+
+        .preview-container {
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            padding: 16px;
+            background: white;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .copy-btn {
+            background: #f0f0f0;
+            border: 1px solid #d9d9d9;
+            color: #323232;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #e6e6e6;
+            border-color: #b3b3b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Block placeholder</h1>
+            <button class="close-btn" onclick="closeDrawer()">✕</button>
+        </div>
+
+        <form id="placeholderForm">
+            <!-- Header Field -->
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="required">*</span> Header
+                </label>
+                <input 
+                    type="text" 
+                    id="headerInput" 
+                    class="form-input" 
+                    placeholder="Add header (max 20 characters)"
+                    maxlength="20"
+                    value=""
+                >
+                <div class="char-count" id="headerCount">0/20</div>
+                <div class="error-message" id="headerError" style="display: none;"></div>
+            </div>
+
+            <!-- Icon Select -->
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="required">*</span> Icon
+                </label>
+                <div class="form-select" id="iconSelect">
+                    <input type="text" class="select-input" id="iconInput" readonly placeholder="Select" value="⭐ Rating">
+                    <span class="select-arrow">▼</span>
+                    <div class="select-dropdown" id="iconDropdown">
+                        <div class="select-option" data-value="✍️" data-label="Text">
+                            <span class="emoji-icon">✍️</span> Text
+                        </div>
+                        <div class="select-option" data-value="⭐" data-label="Rating">
+                            <span class="emoji-icon">⭐</span> Rating
+                        </div>
+                        <div class="select-option" data-value="📷" data-label="Image">
+                            <span class="emoji-icon">📷</span> Image
+                        </div>
+                        <div class="select-option" data-value="📬" data-label="Footer">
+                            <span class="emoji-icon">📬</span> Footer
+                        </div>
+                        <div class="select-option" data-value="🛡️" data-label="Safety">
+                            <span class="emoji-icon">🛡️</span> Safety
+                        </div>
+                        <div class="select-option" data-value="🛟" data-label="Support">
+                            <span class="emoji-icon">🛟</span> Support
+                        </div>
+                        <div class="select-option" data-value="🧭" data-label="Compass">
+                            <span class="emoji-icon">🧭</span> Compass
+                        </div>
+                        <div class="select-option" data-value="⚖️" data-label="Legal">
+                            <span class="emoji-icon">⚖️</span> Legal
+                        </div>
+                        <div class="select-option" data-value="📊" data-label="Graph">
+                            <span class="emoji-icon">📊</span> Graph
+                        </div>
+                        <div class="select-option" data-value="🎯" data-label="Target">
+                            <span class="emoji-icon">🎯</span> Target
+                        </div>
+                        <div class="select-option" data-value="📐" data-label="Block">
+                            <span class="emoji-icon">📐</span> Block
+                        </div>
+                        <div class="select-option" data-value="📄" data-label="Document">
+                            <span class="emoji-icon">📄</span> Document
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body Field -->
+            <div class="form-group">
+                <label class="form-label">Description (optional)</label>
+                <textarea 
+                    id="bodyInput" 
+                    class="form-textarea" 
+                    placeholder="Add description (max 70 characters)"
+                    maxlength="70"
+                    rows="2"
+                ></textarea>
+                <div class="char-count" id="bodyCount">0/70</div>
+                <div class="error-message" id="bodyError" style="display: none;"></div>
+            </div>
+
+            <!-- Size Select -->
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="required">*</span> Size
+                </label>
+                <div class="form-select" id="sizeSelect">
+                    <input type="text" class="select-input" id="sizeInput" readonly placeholder="Select" value="Full width (1/1)">
+                    <span class="select-arrow">▼</span>
+                    <div class="select-dropdown" id="sizeDropdown">
+                        <div class="select-option selected" data-value="large" data-label="Full width (1/1)">
+                            Full width (1/1)
+                        </div>
+                        <div class="select-option" data-value="medium" data-label="Half width (1/2)">
+                            Half width (1/2)
+                        </div>
+                        <div class="select-option" data-value="small" data-label="Third width (1/3)">
+                            Third width (1/3)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Button -->
+            <button type="button" class="update-btn" id="updateBtn" onclick="updatePlaceholder()">
+                Update placeholder
+            </button>
+        </form>
+
+        <!-- Results Section -->
+        <div class="result-section" id="resultSection" style="display: none;">
+            <h3>Generated Placeholder</h3>
+            <div class="url-display" id="urlDisplay">
+                <!-- URL will be displayed here -->
+                <button class="copy-btn" onclick="copyUrl()">Copy</button>
+            </div>
+            <div class="preview-container">
+                <img id="previewImage" class="preview-image" alt="Placeholder preview">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let selectedIcon = { value: '', label: '' };
+        let selectedSize = { value: 'large', label: 'Full width (1/1)' };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateCharCounts();
+            validateForm();
+            
+            // Ensure no text field is focused/selected on load
+            document.activeElement?.blur();
+        });
+
+        function setupEventListeners() {
+            // Header input
+            const headerInput = document.getElementById('headerInput');
+            headerInput.addEventListener('input', function() {
+                updateCharCount('header');
+                validateField('header');
+                validateForm();
+            });
+
+            // Body input
+            const bodyInput = document.getElementById('bodyInput');
+            bodyInput.addEventListener('input', function() {
+                updateCharCount('body');
+                validateField('body');
+                validateForm();
+            });
+
+            // Icon select
+            const iconSelect = document.getElementById('iconSelect');
+            const iconInput = document.getElementById('iconInput');
+            const iconDropdown = document.getElementById('iconDropdown');
+
+            iconInput.addEventListener('click', function() {
+                toggleDropdown('icon');
+            });
+
+            iconDropdown.addEventListener('click', function(e) {
+                const option = e.target.closest('.select-option');
+                if (option) {
+                    selectOption('icon', option);
+                }
+            });
+
+            // Size select
+            const sizeSelect = document.getElementById('sizeSelect');
+            const sizeInput = document.getElementById('sizeInput');
+            const sizeDropdown = document.getElementById('sizeDropdown');
+
+            sizeInput.addEventListener('click', function() {
+                toggleDropdown('size');
+            });
+
+            sizeDropdown.addEventListener('click', function(e) {
+                const option = e.target.closest('.select-option');
+                if (option) {
+                    selectOption('size', option);
+                }
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.form-select')) {
+                    closeAllDropdowns();
+                }
+            });
+        }
+
+        function updateCharCount(field) {
+            const input = document.getElementById(field + 'Input');
+            const count = document.getElementById(field + 'Count');
+            const max = field === 'header' ? 20 : 70;
+            const current = input.value.length;
+            
+            count.textContent = `${current}/${max}`;
+            count.className = 'char-count' + (current > max ? ' error' : '');
+        }
+
+        function updateCharCounts() {
+            updateCharCount('header');
+            updateCharCount('body');
+        }
+
+        function validateField(field) {
+            const input = document.getElementById(field + 'Input');
+            const error = document.getElementById(field + 'Error');
+            const max = field === 'header' ? 20 : 70;
+            
+            if (field === 'header' && input.value.trim() === '') {
+                input.classList.add('error');
+                error.textContent = 'Header is required';
+                error.style.display = 'block';
+                return false;
+            } else if (input.value.length > max) {
+                input.classList.add('error');
+                error.textContent = `Maximum ${max} characters allowed`;
+                error.style.display = 'block';
+                return false;
+            } else {
+                input.classList.remove('error');
+                error.style.display = 'none';
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const headerValid = validateField('header');
+            const bodyValid = validateField('body');
+            const hasIcon = selectedIcon.value !== '';
+            const hasSize = selectedSize.value !== '';
+            
+            const updateBtn = document.getElementById('updateBtn');
+            updateBtn.disabled = !(headerValid && bodyValid && hasIcon && hasSize);
+        }
+
+        function toggleDropdown(type) {
+            const dropdown = document.getElementById(type + 'Dropdown');
+            const arrow = dropdown.parentElement.querySelector('.select-arrow');
+            
+            closeAllDropdowns();
+            
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                arrow.style.transform = 'translateY(-50%)';
+            } else {
+                dropdown.classList.add('open');
+                arrow.style.transform = 'translateY(-50%) rotate(180deg)';
+            }
+        }
+
+        function closeAllDropdowns() {
+            document.querySelectorAll('.select-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('open');
+            });
+            document.querySelectorAll('.select-arrow').forEach(arrow => {
+                arrow.style.transform = 'translateY(-50%)';
+            });
+        }
+
+        function selectOption(type, option) {
+            const value = option.dataset.value;
+            const label = option.dataset.label;
+            const input = document.getElementById(type + 'Input');
+            
+            // Update selected state
+            option.parentElement.querySelectorAll('.select-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            option.classList.add('selected');
+            
+            // Update input value
+            if (type === 'icon') {
+                input.value = `${value} ${label}`;
+                selectedIcon = { value, label };
+            } else {
+                input.value = label;
+                selectedSize = { value, label };
+            }
+            
+            closeAllDropdowns();
+            validateForm();
+        }
+
+        function updatePlaceholder() {
+            const header = document.getElementById('headerInput').value.trim();
+            const body = document.getElementById('bodyInput').value.trim();
+            const emoji = selectedIcon.value;
+            const size = selectedSize.value;
+            
+            if (!header || !emoji || !size) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Build URL for /api/placeholder endpoint (simple parameters)
+            const baseUrl = 'https://placeholder-image-service.vercel.app/api/placeholder';
+            const params = new URLSearchParams({
+                type: size,
+                emoji: emoji,
+                header: header,
+                body: body
+            });
+            
+            const fullUrl = `${baseUrl}?${params.toString()}`;
+            
+            console.log('Generated URL:', fullUrl); // Debug log
+            
+            // Show results
+            const resultSection = document.getElementById('resultSection');
+            const urlDisplay = document.getElementById('urlDisplay');
+            const previewImage = document.getElementById('previewImage');
+            
+            urlDisplay.innerHTML = `${fullUrl} <button class="copy-btn" onclick="copyUrl()">Copy</button>`;
+            
+            // Use fetch to load the SVG and convert to data URL
+            fetch(fullUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.text();
+                })
+                .then(svgText => {
+                    // Convert SVG to data URL
+                    const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgText)}`;
+                    previewImage.src = dataUrl;
+                    previewImage.alt = `${header} placeholder`;
+                    console.log('Image loaded successfully via fetch');
+                })
+                .catch(error => {
+                    console.error('Failed to load image:', error);
+                    previewImage.alt = `Failed to load: ${error.message}`;
+                    previewImage.style.border = '2px solid #ff4d4f';
+                    previewImage.style.padding = '20px';
+                    previewImage.style.background = '#fff2f0';
+                });
+            
+            resultSection.style.display = 'block';
+            
+            // Scroll to results
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyUrl() {
+            const urlText = document.getElementById('urlDisplay').textContent.replace(' Copy', '');
+            navigator.clipboard.writeText(urlText).then(() => {
+                // Visual feedback
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = '#00A66F';
+                copyBtn.style.color = 'white';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '#f0f0f0';
+                    copyBtn.style.color = '#323232';
+                }, 1000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy URL');
+            });
+        }
+
+        function closeDrawer() {
+            // This would close the drawer in a real application
+            console.log('Close drawer');
+        }
+    </script>
+</body>
+</html>
