@@ -90,4 +90,22 @@ export default function handler(req, res) {
   <text x="50%" y="${emojiY}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
   <!-- Header (always at 50%, single line) -->
-  <text x="50%" y="${headerY}%" text-anchor="middle" dominant-bas
+  <text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header.substring(0, 20)}</text>
+  
+  ${bodyLines.length > 0 ? `<!-- Body (max 2 lines) -->
+  ${bodyLines.map((line, index) => {
+    const lineY = bodyY + (index * 6); // 6% spacing between lines
+    return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
+  }).join('')}` : ''}
+</svg>`;
+
+    // Set headers and return SVG
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send(svg);
+    
+  } catch (error) {
+    // Return simple error
+    res.status(500).send('Error generating image');
+  }
+}
