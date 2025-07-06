@@ -36,8 +36,8 @@ export default function handler(req, res) {
       bodyY = 75;
     }
 
-    // Updated font family with Noto Sans priority
-    const fontFamily = 'Noto Sans, system-ui, Arial, sans-serif';
+    // Clean system font family (no Noto Sans)
+    const fontFamily = 'system-ui, -apple-system, Arial, sans-serif';
 
     // Header is always at 50%
     const headerY = 50;
