@@ -37,7 +37,7 @@ export default function handler(req, res) {
     }
 
     // Updated font family with Noto Sans priority
-    const fontFamily = '"Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"';
+    const fontFamily = 'Noto Sans, system-ui, Arial, sans-serif';
 
     // Header is always at 50%
     const headerY = 50;
@@ -80,23 +80,25 @@ export default function handler(req, res) {
     // Wrap the body text
     const bodyLines = wrapBodyText(body);
 
+    // Generate body text elements
+    let bodyTextElements = '';
+    if (bodyLines.length > 0) {
+      bodyTextElements = bodyLines.map((line, index) => {
+        const lineY = bodyY + (index * 6); // 6% spacing between lines
+        return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
+      }).join('\n  ');
+    }
+
     // Generate SVG
-    const svg = `
-<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#${bg}"/>
   <rect x="2" y="2" width="${width-4}" height="${height-4}" fill="none" stroke="#${stroke}" stroke-width="1"/>
   
-  <!-- Emoji -->
   <text x="50%" y="${emojiY}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
-  <!-- Header (always at 50%, single line) -->
   <text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header.substring(0, 20)}</text>
   
-  ${bodyLines.length > 0 ? `<!-- Body (max 2 lines) -->
-  ${bodyLines.map((line, index) => {
-    const lineY = bodyY + (index * 6); // 6% spacing between lines
-    return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
-  }).join('')}` : ''}
+  ${bodyTextElements}
 </svg>`;
 
     // Set headers and return SVG
@@ -105,7 +107,7 @@ export default function handler(req, res) {
     res.status(200).send(svg);
     
   } catch (error) {
-    // Return simple error
+    console.error('SVG generation error:', error);
     res.status(500).send('Error generating image');
   }
 }
