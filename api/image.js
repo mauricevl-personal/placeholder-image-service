@@ -36,15 +36,23 @@ export default function handler(req, res) {
       bodyY = 75;
     }
 
-    // Clean system font family (no Noto Sans)
+    // Clean system font family
     const fontFamily = 'system-ui, -apple-system, Arial, sans-serif';
 
     // Header is always at 50%
     const headerY = 50;
 
+    // Determine if text wrapping should occur based on image size
+    const shouldWrapText = width <= 600; // Only wrap for medium (300px) and small (200px)
+
     // Function to wrap body text at 35 characters per line, max 2 lines
     function wrapBodyText(text) {
       if (!text || text.trim() === '') return [];
+      
+      // For xlarge and large, return single line (no wrapping)
+      if (!shouldWrapText) {
+        return [text.trim()];
+      }
       
       const words = text.trim().split(' ');
       const lines = [];
@@ -80,11 +88,15 @@ export default function handler(req, res) {
     // Wrap the body text
     const bodyLines = wrapBodyText(body);
 
+    // Calculate line height as 0.9em relative to font size
+    const lineHeight = bodySize * 0.9;
+
     // Generate body text elements
     let bodyTextElements = '';
     if (bodyLines.length > 0) {
       bodyTextElements = bodyLines.map((line, index) => {
-        const lineY = bodyY + (index * 6); // 6% spacing between lines
+        // Use relative line height instead of fixed percentage
+        const lineY = bodyY + (index * (lineHeight / height * 100)); // Convert to percentage
         return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
       }).join('\n  ');
     }
