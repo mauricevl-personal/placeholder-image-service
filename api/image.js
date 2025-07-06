@@ -42,8 +42,8 @@ export default function handler(req, res) {
     // Header is always at 50%
     const headerY = 50;
 
-    // Determine if text wrapping should occur based on image size
-    const shouldWrapText = width <= 600; // Only wrap for medium (300px) and small (200px)
+    // Only wrap text for medium (300px) and small (200px) - not for large (600px)
+    const shouldWrapText = width < 600;
 
     // Function to wrap body text at 35 characters per line, max 2 lines
     function wrapBodyText(text) {
@@ -88,14 +88,14 @@ export default function handler(req, res) {
     // Wrap the body text
     const bodyLines = wrapBodyText(body);
 
-    // Calculate line height as 0.9em relative to font size
-    const lineHeight = bodySize * 0.9;
+    // Calculate line height as 1.1em relative to font size
+    const lineHeight = bodySize * 1.1;
 
     // Generate body text elements
     let bodyTextElements = '';
     if (bodyLines.length > 0) {
       bodyTextElements = bodyLines.map((line, index) => {
-        // Use relative line height instead of fixed percentage
+        // Use relative line height (1.1em)
         const lineY = bodyY + (index * (lineHeight / height * 100)); // Convert to percentage
         return `<text x="50%" y="${lineY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${line}</text>`;
       }).join('\n  ');
