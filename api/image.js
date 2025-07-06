@@ -36,11 +36,49 @@ export default function handler(req, res) {
       bodyY = 75;
     }
 
-    // Font family
-    const fontFamily = 'system-ui, -apple-system, Segoe UI, Arial, sans-serif';
+    // Updated font family with Noto Sans priority
+    const fontFamily = '"Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"';
 
     // Header is always at 50%
     const headerY = 50;
+
+    // Function to wrap body text at 35 characters per line, max 2 lines
+    function wrapBodyText(text) {
+      if (!text || text.trim() === '') return [];
+      
+      const words = text.trim().split(' ');
+      const lines = [];
+      let currentLine = '';
+      
+      for (const word of words) {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        
+        if (testLine.length <= 35) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            // Word is longer than 35 chars, truncate it
+            lines.push(word.substring(0, 35));
+            currentLine = '';
+          }
+        }
+        
+        // Stop at 2 lines max
+        if (lines.length >= 2) break;
+      }
+      
+      if (currentLine && lines.length < 2) {
+        lines.push(currentLine);
+      }
+      
+      return lines;
+    }
+
+    // Wrap the body text
+    const bodyLines = wrapBodyText(body);
 
     // Generate SVG
     const svg = `
@@ -51,20 +89,5 @@ export default function handler(req, res) {
   <!-- Emoji -->
   <text x="50%" y="${emojiY}%" text-anchor="middle" dominant-baseline="middle" font-size="${emojiSize}" font-family="${fontFamily}">${emoji}</text>
   
-  <!-- Header (always at 50%) -->
-  <text x="50%" y="${headerY}%" text-anchor="middle" dominant-baseline="middle" font-size="${headerSize}" font-weight="bold" fill="#${text}" font-family="${fontFamily}">${header}</text>
-  
-  ${body.trim() ? `<!-- Body -->
-  <text x="50%" y="${bodyY}%" text-anchor="middle" dominant-baseline="middle" font-size="${bodySize}" fill="#${text}" font-family="${fontFamily}">${body}</text>` : ''}
-</svg>`;
-
-    // Set headers and return SVG
-    res.setHeader('Content-Type', 'image/svg+xml');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-    res.status(200).send(svg);
-    
-  } catch (error) {
-    // Return simple error
-    res.status(500).send('Error generating image');
-  }
-}
+  <!-- Header (always at 50%, single line) -->
+  <text x="50%" y="${headerY}%" text-anchor="middle" dominant-bas
