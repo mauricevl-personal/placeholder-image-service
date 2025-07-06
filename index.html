@@ -689,44 +689,50 @@
             const previewGrid = document.getElementById('previewGrid');
             const baseUrl = window.location.origin + '/api';
             
+            console.log('Generating previews...', values); // Debug log
+            
             previewGrid.innerHTML = '';
 
             Object.entries(typeConfigs).forEach(([type, config]) => {
                 const typeSettings = getTypeSettings(type);
+                
+                console.log(`${type} settings:`, typeSettings); // Debug log
                 
                 const params = new URLSearchParams({
                     emoji: values.emoji,
                     header: values.header,
                     body: values.body,
                     bg: values.bg,
-                    text: values.text,
-                    emojiSize: typeSettings.emojiSize,
-                    headerSize: typeSettings.headerSize,
-                    bodySize: typeSettings.bodySize,
-                    emojiY: typeSettings.emojiY,
-                    bodyY: typeSettings.bodyY
+                    text: values.text
                 });
 
                 const imageUrl = `${baseUrl}/${config.endpoint}?${params.toString()}`;
+                
+                console.log(`Generated URL for ${type}:`, imageUrl); // Debug log
                 
                 const previewItem = document.createElement('div');
                 previewItem.className = `preview-item preview-${type}`;
                 previewItem.innerHTML = `
                     <h3>${type.toUpperCase()} - ${config.width}×${config.height} (Preview: ${config.displayWidth}px)</h3>
-                    <img src="${imageUrl}" alt="${type}" class="preview-image" loading="lazy">
+                    <img src="${imageUrl}" alt="${type}" class="preview-image" loading="lazy" onerror="console.error('Image failed to load:', this.src)">
                     <div class="preview-url">${imageUrl}</div>
                 `;
                 
                 previewGrid.appendChild(previewItem);
             });
 
-            // Update URLs summary
+            // Update URLs summary  
+            const xlarge = `${baseUrl}/xlarge?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
+            const large = `${baseUrl}/large?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
+            const medium = `${baseUrl}/medium?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
+            const small = `${baseUrl}/small?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
+            
             document.getElementById('generatedUrl').innerHTML = `
                 <strong>Generated URLs:</strong><br>
-                XLarge: ${baseUrl}/xlarge?...<br>
-                Large: ${baseUrl}/large?...<br>
-                Medium: ${baseUrl}/medium?...<br>
-                Small: ${baseUrl}/small?...
+                <strong>XLarge:</strong> ${xlarge}<br><br>
+                <strong>Large:</strong> ${large}<br><br>
+                <strong>Medium:</strong> ${medium}<br><br>
+                <strong>Small:</strong> ${small}
             `;
         }
     </script>
