@@ -687,7 +687,7 @@
         function generatePreviews() {
             const values = getFormValues();
             const previewGrid = document.getElementById('previewGrid');
-            const baseUrl = window.location.origin + '/api';
+            const baseUrl = window.location.origin + '/api/image'; // Use the main dynamic endpoint
             
             console.log('Generating previews...', values); // Debug log
             
@@ -699,14 +699,21 @@
                 console.log(`${type} settings:`, typeSettings); // Debug log
                 
                 const params = new URLSearchParams({
+                    width: config.width,
+                    height: config.height,
                     emoji: values.emoji,
                     header: values.header,
                     body: values.body,
                     bg: values.bg,
-                    text: values.text
+                    text: values.text,
+                    emojiSize: typeSettings.emojiSize,
+                    headerSize: typeSettings.headerSize,
+                    bodySize: typeSettings.bodySize,
+                    emojiY: typeSettings.emojiY,
+                    bodyY: typeSettings.bodyY
                 });
 
-                const imageUrl = `${baseUrl}/${config.endpoint}?${params.toString()}`;
+                const imageUrl = `${baseUrl}?${params.toString()}`;
                 
                 console.log(`Generated URL for ${type}:`, imageUrl); // Debug log
                 
@@ -721,19 +728,31 @@
                 previewGrid.appendChild(previewItem);
             });
 
-            // Update URLs summary  
-            const xlarge = `${baseUrl}/xlarge?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
-            const large = `${baseUrl}/large?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
-            const medium = `${baseUrl}/medium?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
-            const small = `${baseUrl}/small?emoji=${encodeURIComponent(values.emoji)}&header=${encodeURIComponent(values.header)}&body=${encodeURIComponent(values.body)}`;
-            
-            document.getElementById('generatedUrl').innerHTML = `
-                <strong>Generated URLs:</strong><br>
-                <strong>XLarge:</strong> ${xlarge}<br><br>
-                <strong>Large:</strong> ${large}<br><br>
-                <strong>Medium:</strong> ${medium}<br><br>
-                <strong>Small:</strong> ${small}
-            `;
+            // Update URLs summary with the custom parameters
+            Object.entries(typeConfigs).forEach(([type, config]) => {
+                const typeSettings = getTypeSettings(type);
+                const params = new URLSearchParams({
+                    width: config.width,
+                    height: config.height,
+                    emoji: values.emoji,
+                    header: values.header,
+                    body: values.body,
+                    bg: values.bg,
+                    text: values.text,
+                    emojiSize: typeSettings.emojiSize,
+                    headerSize: typeSettings.headerSize,
+                    bodySize: typeSettings.bodySize,
+                    emojiY: typeSettings.emojiY,
+                    bodyY: typeSettings.bodyY
+                });
+                
+                const fullUrl = `${baseUrl}?${params.toString()}`;
+                
+                document.getElementById('generatedUrl').innerHTML += `
+                    <strong>${type.toUpperCase()}:</strong><br>
+                    <div style="font-size: 0.8rem; margin-bottom: 1rem; word-break: break-all;">${fullUrl}</div>
+                `;
+            });
         }
     </script>
 </body>
